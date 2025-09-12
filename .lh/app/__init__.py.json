@@ -1,0 +1,18 @@
+{
+    "sourceFile": "app/__init__.py",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1757602355950,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1757602355950,
+            "name": "Commit-0",
+            "content": "from fastapi import FastAPI, APIRouter\nfrom app.routes.applicant import applicant_router\nfrom app.routes.auth import auth_router\nfrom app.routes.hr import hr_router\nfrom fastapi.middleware.cors import CORSMiddleware\n\napp = FastAPI(title=\"Hireco\", version=\"0.1.0\")\n\napi_router = APIRouter(prefix=\"/api/v1\")\n\napi_router.include_router(applicant_router)\napi_router.include_router(auth_router)\napi_router.include_router(hr_router)\norigins = [\"*\"]\n\napp.include_router(api_router)\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=origins,  # Mengizinkan asal tertentu\n    allow_credentials=True,  # Mengizinkan pengiriman cookies\n    allow_methods=[\"GET\", \"POST\", \"PUT\", \"DELETE\"],  # Mengizinkan semua method (GET, POST, dll)\n    allow_headers=[\"*\"],  # Mengizinkan semua header\n)\n"
+        }
+    ]
+}

@@ -55,6 +55,9 @@ class Accounts(Base):
     email = Column(String, unique=True)
     password = Column(String)
     role = Column(String)
+    provider = Column(String, default="email")  # bisa "email", "google", dll
+    oauth_id = Column(String, nullable=True)  # untuk OAuth
+    profile = Column(Text, nullable=True) 
     created_at = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     # Relasi ke Criteria
 
@@ -74,16 +77,6 @@ class Job(Base):
     created_at = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
     account = relationship("Accounts", back_populates="jobs")
     cv_analysis = relationship("CVAnalysis", back_populates="job", uselist=False)
-
-
-# class Criteria(Base):
-#     __tablename__ = "criteria"
-#     id = Column(Integer, primary_key=True, autoincrement=True)
-#     criteria = Column(Text)
-#     account_id = Column(Integer, ForeignKey("accounts.id"), nullable=False)
-#     created_at = Column(DateTime, default=datetime.datetime.now(datetime.timezone.utc))
-#     account = relationship("Accounts", back_populates="criteria")
-#     jobs = relationship("Job", back_populates="criteria", uselist=False)
 
 
 engine = create_engine("sqlite:///./hireco.db")

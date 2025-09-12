@@ -7,7 +7,7 @@ const BASE_URL = "http://localhost:5666/api/v1";
 export async function loginHandler({ email, password }) {
     try {
         const response = await axios.post(`${BASE_URL}/auth/login`, { email: email, password: password });
-
+        console.log(response.data)
         const data = response.data;
 
         // Simpan token di cookies (7 hari)
@@ -17,6 +17,22 @@ export async function loginHandler({ email, password }) {
             msg: "success",
             status: true,
             token: data.token
+        };
+    } catch (error) {
+        console.error("Login error:", error);
+        return {
+            msg: "Something went wrong",
+            status: false
+        };
+    }
+}
+
+export async function registerHandler({ email, password, fullName }) {
+    try {
+        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName, role: "user" });
+        return {
+            msg: "success",
+            status: true,
         };
     } catch (error) {
         console.error("Login error:", error);
@@ -104,7 +120,6 @@ export async function getJobByHr() {
     }
 }
 
-
 export async function deleteJob(job_id) {
     try {
         await axios.delete(`${BASE_URL}/hr/jobs/${job_id}`, {
@@ -149,7 +164,6 @@ export async function updateJob({ job_id, title, position, description, criteria
         };
     }
 }
-
 
 export async function getAllJobs() {
     try {

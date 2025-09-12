@@ -4,7 +4,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from app.ai.chromadb.vectoredb import vectorstore
 from app.ai.service.agent import analyze_cv_with_criteria
 import logging, fitz
-import rapidfuzz as fuzz
 from typing import List, Dict
 
 logger = logging.getLogger(__name__)
@@ -45,16 +44,13 @@ async def loader_pdf(job_id, name, email, telp, file_path, file_name, criteria,f
         telp=telp,
     )
 
-    # ✨ Ambil teks yang sudah digunakan di analisis → highlight
-    # Ambil highlights dari hasil
-
 
     highlights = result.get("highlights", {"positive": [], "negative": []})
 
     if highlights["positive"] or highlights["negative"]:
         highlighted_path = file_path.replace(".pdf", "_highlighted.pdf")
         add_highlights_simple(file_path, highlighted_path, highlights)
-        result["highlighted_pdf"] = f"/downloads/{os.path.basename(highlighted_path)}"
+        result["highlightead_pdf"] = f"/downloads/{os.path.basename(highlighted_path)}"
     else:
         result["highlighted_pdf"] = None
 

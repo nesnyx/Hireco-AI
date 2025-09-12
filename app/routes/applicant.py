@@ -51,9 +51,7 @@ async def upload_cv(
         raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
     file_id = str(uuid.uuid4())
     file_path = UPLOAD_DIR / f"{file_id}.pdf"
-    highlighted_path = UPLOAD_DIR / f"{file_id}_highlighted.pdf"  # ⬅️ tambah ini
-    file_saved = False
-    highlighted_created = False
+    highlighted_path = UPLOAD_DIR / f"{file_id}_highlighted.pdf"
     try:
 
         with open(file_path, "wb") as f:
@@ -169,12 +167,35 @@ async def get_by_hr(
 @applicant_router.delete("/delete/{id}")
 async def delete_applicant(id: int, db: Session = Depends(get_db)):
     try:
-        applcant = db.query(CVAnalysis).filter(CVAnalysis.id == id).first()
-        if not applcant:
+
+        applicant = db.query(CVAnalysis).filter(CVAnalysis.id == id).first()
+        file_path = UPLOAD_DIR / f"{applicant.file_id}.pdf"
+        highlighted_path = UPLOAD_DIR / f"{applicant.file_id}_highlighted.pdf"
+        if not applicant:
             return {"message": "Applicant not found or not owned by user"}
-        db.delete(applcant)
+        db.delete(applicant)
         db.commit()
-        delete_applicant_vectordb(file_id=applcant.file_id)
+        delete_applicant_vectordb(file_id=applicant.file_id)
+
+        # Hapus file PDF
+        if file_path.exists():
+            try:
+                file_path.unlink()
+                logger.info(f"✅ Deleted original PDF after error: {file_path}")
+            except Exception as err:
+                logger.error(f"❌ Failed to delete original PDF {file_path}: {err}")
+
+        # Hapus file highlighted
+        if highlighted_path.exists():
+            try:
+                highlighted_path.unlink()
+                logger.info(
+                    f"✅ Deleted highlighted PDF after error: {highlighted_path}"
+                )
+            except Exception as err:
+                logger.error(
+                    f"❌ Failed to delete highlighted PDF {highlighted_path}: {err}"
+                )
         return {"message": "Applicant deleted successfully"}
     except Exception as e:
         logger.error(f"DB Error: {e}")

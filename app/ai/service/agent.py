@@ -1,37 +1,38 @@
 # app/ai/agents/scoring_agent.py
 from langchain_core.prompts import ChatPromptTemplate
 from app.utils.llm import llm
+
 from langchain_core.output_parsers import JsonOutputParser
-from typing import Dict
 import logging
 
 logger = logging.getLogger(__name__)
 
-# Prompt template untuk scoring CV
+
 PROMPT_TEMPLATE = """
-Anda adalah HR AI yang bertugas mengevaluasi CV kandidat berdasarkan kriteria yang diberikan. 
-Lakukan penilaian objektif dalam tiga aspek utama: 
-- Hard Skill (0-100)
-- Experience (0-100)
-- Presentation Quality (0-100)
+Anda adalah HR AI yang bertugas mengevaluasi CV kandidat secara objektif berdasarkan kriteria yang diberikan. 
+Lakukan penilaian dalam tiga aspek utama dengan rentang nilai 0-100:
+- Hard Skill
+- Experience
+- Presentation Quality
 
-Setelah itu, hitung skor keseluruhan (0 - 100) sebagai ringkasan performa umum, 
-dan tentukan apakah kandidat memenuhi standar minimum. 
+Kemudian hitung skor keseluruhan (0-100) sebagai ringkasan performa, dan tentukan apakah kandidat memenuhi standar minimum.
 
-Berikan penjelasan yang ringkas namun tetap objektif dan informatif, 
-sehingga dapat membantu HR dalam pertimbangan keputusan. 
-Tambahkan catatan bahwa hasil ini adalah analisis AI sebagai pendukung, 
-bukan pengganti penilaian akhir HR.
+Kaidah penting:
+- Hard Skill tidak harus identik dengan kriteria, namun tetap dinilai objektif sesuai kekuatan teknis yang ada.
+- Jika kandidat menunjukkan skill signifikan di luar kriteria, tetap beri bobot positif.
+- Penilaian harus ringkas, objektif, dan informatif, sebagai pendukung HR (bukan pengganti keputusan akhir).
 
-terkait HARD SKILL tidak selalu terikat dengan CRITERIA yang diinginkan, TETAP NILAI SECARA OBJEKTIF
-JIKA MEMILIKI HARD SKILL ATAU PENGUASAAN SKILL YANG CUKUP BISA DIJADIKAN ACUAN DALAM PENILAIAN
+Tambahkan juga identifikasi teks spesifik dari CV:
+- Hard skill penting → highlight kuning
+- Pengalaman kerja relevan → highlight hijau
+- Teks klise/ambigu/kurang profesional → highlight merah
 
-Selain itu, identifikasi:
-- Teks yang menunjukkan **hard skill penting** (harus di-highlight kuning)
-- Teks yang menunjukkan **pengalaman kerja relevan** (harus di-highlight hijau)
-- Teks yang **kurang profesional, klise, atau ambigu** (harus di-highlight merah)
-
-Gunakan **teks persis seperti muncul di CV**, jangan parafrase.
+Catatan:
+- Gunakan teks asli persis dari CV (jangan parafrase).
+- Output wajib dalam format JSON valid.
+- Tidak boleh ada komentar/penjelasan tambahan di luar JSON.
+- Semua string harus di-escape dengan benar (\\n untuk baris baru, \\\" untuk tanda kutip).
+- Struktur JSON harus mengikuti format berikut:
 
 Berikan output JSON:
 {{
@@ -57,9 +58,10 @@ Kriteria:
 async def analyze_cv_with_criteria(
     job_id, vector_db, criteria, type, source, telp, file_id
 ):
+    # Dalam Tahap pengembangan
     retriever = vector_db.as_retriever(
         search_kwargs={
-            "k": 3,
+            "k": 10,
             "filter": {
                 "$and": [
                     {"file_id": {"$eq": file_id}},
@@ -71,13 +73,14 @@ async def analyze_cv_with_criteria(
             },
         }
     )
+
     relevant_context = retriever.invoke(
-        "Fokus pada aspek pengalaman kerja, kemampuan teknis (hard skills), dan kualitas penyajian CV, termasuk kejelasan kalimat dan penggunaan bahasa yang profesional."
+        "Fokus pada tiga aspek utama: pengalaman kerja (relevansi, durasi, pencapaian), kemampuan teknis atau hard skills (kedalaman dan relevansi skill), serta kualitas penyajian CV (kejelasan kalimat, struktur, dan profesionalitas bahasa). Berikan analisis yang objektif, rinci, dan detail namun tetap ringkas serta efisien untuk membantu HR dalam pengambilan keputusan."
     )
+    # END Dalam Tahap pengembangan
     context_str = "\n\n".join([doc.page_content for doc in relevant_context])
-    parser = JsonOutputParser()
     prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-    chain = prompt | llm | parser
+    chain = prompt | llm | JsonOutputParser()
 
     try:
         result = await chain.ainvoke({"cv_text": context_str, "criteria": criteria})
