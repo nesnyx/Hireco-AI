@@ -19,8 +19,8 @@ export default function UserProtectedRoute() {
                 if (userData?.role === 'user') {
                     setStatus('allowed');
                 } else {
-                    // Role bukan user → tidak diizinkan
-                    localStorage.removeItem("token"); // opsional: tolak akses token invalid-role
+
+                    localStorage.removeItem("token");
                     setStatus('forbidden');
                 }
             } catch (error) {

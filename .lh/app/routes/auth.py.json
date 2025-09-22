@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1757601967377,
@@ -16,6 +16,10 @@
                 {
                     "date": 1757602164771,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -94,9 +94,9 @@\n     token = generate_token(payload)\n     return {\"token\": token, \"token_type\": \"bearer\"}\n \n \n-@auth_router.get(\"/me\",response_model=UserResponse)\n+@auth_router.get(\"/me\")\n async def me(current_user=Depends(get_current_user)):\n     return current_user[\"data\"]\n \n @auth_router.get(\"/logout\")\n"
+                },
+                {
+                    "date": 1758545874533,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,9 +42,9 @@\n     if user.password != login_input.password:\n         raise HTTPException(status_code=401, detail=\"Invalid email or password\")\n     payload = {\"id\": user.id}\n     token = generate_token(payload)\n-    return {\"token\": token, \"token_type\": \"bearer\",\"role\"}\n+    return {\"token\": token, \"token_type\": \"bearer\",\"role\":}\n \n \n @auth_router.post(\"/register\")\n async def register(register_input: RegisterInput, db: Session = Depends(get_db)):\n"
                 }
             ],
             "date": 1757601967377,

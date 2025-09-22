@@ -65,14 +65,12 @@ export default function JobDashboard() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-
         const formDataToSend = new FormData();
         formDataToSend.append('name', formData.name);
         formDataToSend.append('email', formData.email);
         formDataToSend.append('telp', formData.telp);
         formDataToSend.append('file', formData.file);
         formDataToSend.append('job_id', selectedJob.id);
-
 
         try {
             setIsLoading(true);
@@ -91,7 +89,6 @@ export default function JobDashboard() {
             window.location.reload();
         }
     };
-
     const openApplyModal = (job) => {
         setSelectedJob(job);
         setIsModalOpen(true);

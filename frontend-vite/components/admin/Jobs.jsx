@@ -83,13 +83,11 @@ export default function Jobs() {
     const handleDeleteClick = (job) => {
         setJobToDelete(job);
         setIsDeleteModalOpen(true);
-
     };
 
     // 🔴 Handle update: buka modal
     const handleUpdateClick = (job) => {
         setJobToUpdate(job);
-        // Isi newJob dengan data job yang akan diupdate
         setNewJob({
             title: job.title,
             description: job.description,

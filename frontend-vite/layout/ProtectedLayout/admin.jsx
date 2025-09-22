@@ -50,8 +50,8 @@ export default function ProtectedRoute() {
         return <Navigate to="/admin/login" replace />;
     }
 
-    if (isAuthenticated()) {
-        return <Navigate to="/dashboard/jobs" replace />;
+    if (!isAuthenticated()) {
+        return <Navigate to="/admin/login" replace />;
     }
 
     return <Outlet />

@@ -10,7 +10,6 @@ const LoginPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
         try {
             const token = await loginHandler({ email, password });
             if (token.status === false) {

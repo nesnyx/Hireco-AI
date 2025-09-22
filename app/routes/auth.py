@@ -43,7 +43,7 @@ async def login(login_input: LoginInput, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     payload = {"id": user.id}
     token = generate_token(payload)
-    return {"token": token, "token_type": "bearer"}
+    return {"token": token, "token_type": "bearer","role":user.role}
 
 
 @auth_router.post("/register")

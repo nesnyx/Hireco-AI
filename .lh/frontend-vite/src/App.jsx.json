@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 3,
+            "activePatchIndex": 8,
             "patches": [
                 {
                     "date": 1757602574266,
@@ -20,6 +20,26 @@
                 {
                     "date": 1757602628645,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,10 +6,10 @@\n import NotFoundRoute from \"../pages/NotFound\";\n import LoginPageUser from \"../pages/user/Login\";\n import ProtectedRoute from \"../layout/ProtectedLayout/admin\";\n import UserProtectedRoute from \"../layout/ProtectedLayout/user\";\n-import LoginRedirectRoute from \"../layout/ProtectedLayout/redirect\";\n \n+\n export default function App() {\n   return (\n     <BrowserRouter>\n       <Routes>\n@@ -22,12 +22,9 @@\n         <Route element={<UserProtectedRoute />}>\n           <Route path=\"/dashboard/jobs\" element={<JobDashboard />} />\n         </Route>\n \n-        {/* Public Routes with Redirect Guard */}\n-        <Route element={<LoginRedirectRoute />}>\n-          \n-        </Route>\n+        <Route path=\"/admin/login\" element={<LoginPage />} />\n         <Route path=\"/user/login\" element={<LoginPageUser />} />\n \n \n \n"
+                },
+                {
+                    "date": 1758153373575,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,9 +21,9 @@\n         {/* User Protected Routes */}\n         <Route element={<UserProtectedRoute />}>\n           <Route path=\"/dashboard/jobs\" element={<JobDashboard />} />\n         </Route>\n-\n+        <Route path=\"/admin/dashboard\" element={<DashboardPage />} />\n         <Route path=\"/admin/login\" element={<LoginPage />} />\n         <Route path=\"/user/login\" element={<LoginPageUser />} />\n \n \n"
+                },
+                {
+                    "date": 1758153394082,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,11 +13,11 @@\n   return (\n     <BrowserRouter>\n       <Routes>\n         {/* Admin Protected Routes */}\n-        <Route element={<ProtectedRoute />}>\n+        {/* <Route element={<ProtectedRoute />}>\n           <Route path=\"/admin/dashboard\" element={<DashboardPage />} />\n-        </Route>\n+        </Route> */}\n \n         {/* User Protected Routes */}\n         <Route element={<UserProtectedRoute />}>\n           <Route path=\"/dashboard/jobs\" element={<JobDashboard />} />\n"
+                },
+                {
+                    "date": 1758546280920,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,17 +13,17 @@\n   return (\n     <BrowserRouter>\n       <Routes>\n         {/* Admin Protected Routes */}\n-        {/* <Route element={<ProtectedRoute />}>\n+        <Route element={<ProtectedRoute />}>\n           <Route path=\"/admin/dashboard\" element={<DashboardPage />} />\n-        </Route> */}\n+        </Route>\n \n         {/* User Protected Routes */}\n         <Route element={<UserProtectedRoute />}>\n-          <Route path=\"/dashboard/jobs\" element={<JobDashboard />} />\n+          \n         </Route>\n-        <Route path=\"/admin/dashboard\" element={<DashboardPage />} />\n+        \n         <Route path=\"/admin/login\" element={<LoginPage />} />\n         <Route path=\"/user/login\" element={<LoginPageUser />} />\n \n \n"
+                },
+                {
+                    "date": 1758546288709,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,16 +14,16 @@\n     <BrowserRouter>\n       <Routes>\n         {/* Admin Protected Routes */}\n         <Route element={<ProtectedRoute />}>\n-          <Route path=\"/admin/dashboard\" element={<DashboardPage />} />\n+          \n         </Route>\n-\n+        <Route path=\"/admin/dashboard\" element={<DashboardPage />} />\n         {/* User Protected Routes */}\n-        <Route element={<UserProtectedRoute />}>\n+        {/* <Route element={<UserProtectedRoute />}>\n           \n-        </Route>\n-        \n+        </Route> */}\n+        <Route path=\"/dashboard/jobs\" element={<JobDashboard />} />\n         <Route path=\"/admin/login\" element={<LoginPage />} />\n         <Route path=\"/user/login\" element={<LoginPageUser />} />\n \n \n"
+                },
+                {
+                    "date": 1758546311743,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,16 +14,16 @@\n     <BrowserRouter>\n       <Routes>\n         {/* Admin Protected Routes */}\n         <Route element={<ProtectedRoute />}>\n-          \n+          <Route path=\"/admin/dashboard\" element={<DashboardPage />} />\n         </Route>\n-        <Route path=\"/admin/dashboard\" element={<DashboardPage />} />\n+\n         {/* User Protected Routes */}\n-        {/* <Route element={<UserProtectedRoute />}>\n-          \n-        </Route> */}\n-        <Route path=\"/dashboard/jobs\" element={<JobDashboard />} />\n+        <Route element={<UserProtectedRoute />}>\n+          <Route path=\"/dashboard/jobs\" element={<JobDashboard />} />\n+        </Route>\n+        \n         <Route path=\"/admin/login\" element={<LoginPage />} />\n         <Route path=\"/user/login\" element={<LoginPageUser />} />\n \n \n"
                 }
             ],
             "date": 1757602574266,

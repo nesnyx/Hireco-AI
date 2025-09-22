@@ -22,7 +22,7 @@ export default function App() {
         <Route element={<UserProtectedRoute />}>
           <Route path="/dashboard/jobs" element={<JobDashboard />} />
         </Route>
-
+        
         <Route path="/admin/login" element={<LoginPage />} />
         <Route path="/user/login" element={<LoginPageUser />} />
 
