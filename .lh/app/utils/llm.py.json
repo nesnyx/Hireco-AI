@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 1,
+            "activePatchIndex": 3,
             "patches": [
                 {
                     "date": 1757602089074,
@@ -12,6 +12,14 @@
                 {
                     "date": 1758546451636,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,10 +6,10 @@\n \n load_dotenv()\n \n API_KEY = os.getenv(\"API_KEY\")\n-llm = ChatGoogleGenerativeAI(api_key=API_KEY, model=\"gemini-2.5-flash\", temperature=0.1)\n-# llm = ChatOllama(model=\"llama3.1:8b\",temperature=0.1,base_url=\"https://crane-primary-singularly.ngrok-free.app\")\n+# llm = ChatGoogleGenerativeAI(api_key=API_KEY, model=\"gemini-2.5-flash\", temperature=0.1)\n+llm = ChatOllama(model=\"llama3.1:8b\",temperature=0.1,base_url=\"https://crane-primary-singularly.ngrok-free.app\")\n \n EMBEDDING_MODEL = \"models/embedding-001\"\n \n embedding_function = GoogleGenerativeAIEmbeddings(\n"
+                },
+                {
+                    "date": 1759818123390,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,10 +6,10 @@\n \n load_dotenv()\n \n API_KEY = os.getenv(\"API_KEY\")\n-# llm = ChatGoogleGenerativeAI(api_key=API_KEY, model=\"gemini-2.5-flash\", temperature=0.1)\n-llm = ChatOllama(model=\"llama3.1:8b\",temperature=0.1,base_url=\"https://crane-primary-singularly.ngrok-free.app\")\n+llm = ChatGoogleGenerativeAI(api_key=API_KEY, model=\"gemini-2.5-flash\", temperature=0.1)\n+# llm = ChatOllama(model=\"llama3.1:8b\",temperature=0.1,base_url=\"https://crane-primary-singularly.ngrok-free.app\")\n \n EMBEDDING_MODEL = \"models/embedding-001\"\n \n embedding_function = GoogleGenerativeAIEmbeddings(\n"
+                },
+                {
+                    "date": 1759818151656,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,9 +6,9 @@\n \n load_dotenv()\n \n API_KEY = os.getenv(\"API_KEY\")\n-llm = ChatGoogleGenerativeAI(api_key=API_KEY, model=\"gemini-2.5-flash\", temperature=0.1)\n+llm = ChatGoogleGenerativeAI(api_key=API_KEY, model=\"gemini-2.0-flash\", temperature=0.1)\n # llm = ChatOllama(model=\"llama3.1:8b\",temperature=0.1,base_url=\"https://crane-primary-singularly.ngrok-free.app\")\n \n EMBEDDING_MODEL = \"models/embedding-001\"\n \n"
                 }
             ],
             "date": 1757602089074,

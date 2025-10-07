@@ -9,10 +9,10 @@ from fastapi import (
 )
 from sqlalchemy.orm import Session
 from pathlib import Path
-from app.ai.service.db import Job, save_cv_analysis_result
+from app.ai.service.models import Job, save_cv_analysis_result
 from app.ai.service.splitter import loader_pdf
 from pydantic import BaseModel
-from app.ai.service.db import get_db, CVAnalysis, Job
+from app.ai.service.models import get_db, CVAnalysis, Job
 from app.utils.jwt import get_current_user
 from app.ai.chromadb.vectoredb import delete_applicant_vectordb, check_applicant_exists
 

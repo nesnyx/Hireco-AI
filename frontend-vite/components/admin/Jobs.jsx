@@ -5,6 +5,7 @@ import { FaEdit } from "react-icons/fa";
 export default function Jobs() {
     const [jobs, setJobs] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isViewDetails, setIsViewDetails] = useState(false)
     const [newJob, setNewJob] = useState({
         title: '',
         description: '',
@@ -12,7 +13,7 @@ export default function Jobs() {
         criteria: '',
     });
 
-    // State untuk modal delete
+
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [jobToDelete, setJobToDelete] = useState(null);
@@ -97,6 +98,17 @@ export default function Jobs() {
         setIsUpdateModalOpen(true);
     };
 
+    const handleVidewDetailClick = (job) => {
+        setJobToUpdate(job);
+        setNewJob({
+            title: job.title,
+            description: job.description,
+            position: job.position,
+            criteria: job.criteria,
+        });
+        setIsViewDetails(true);
+    };
+
     // 🔴 Konfirmasi hapus
     const confirmDelete = async () => {
         try {
@@ -121,6 +133,9 @@ export default function Jobs() {
         setIsDeleteModalOpen(false);
         setJobToDelete(null);
     };
+
+
+
 
     return (
         <div>
@@ -167,7 +182,7 @@ export default function Jobs() {
                                     </span>
                                 </div>
 
-                                <button className="text-blue-600 text-sm font-medium hover:text-blue-800 transition cursor-pointer">
+                                <button onClick={() => handleVidewDetailClick(job)} className="text-blue-600 text-sm font-medium hover:text-blue-800 transition cursor-pointer">
                                     View Details →
                                 </button>
                             </div>
@@ -320,7 +335,7 @@ export default function Jobs() {
                                     <input
                                         type="text"
                                         name="title"
-                                        value={newJob.title}           
+                                        value={newJob.title}
                                         onChange={handleChange}
                                         required
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -331,7 +346,7 @@ export default function Jobs() {
                                     <label className="block text-sm font-medium text-gray-700">Description</label>
                                     <textarea
                                         name="description"
-                                        value={newJob.description}    
+                                        value={newJob.description}
                                         onChange={handleChange}
                                         required
                                         rows="3"
@@ -344,7 +359,7 @@ export default function Jobs() {
                                     <input
                                         type="text"
                                         name="position"
-                                        value={newJob.position}        
+                                        value={newJob.position}
                                         onChange={handleChange}
                                         required
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -356,7 +371,7 @@ export default function Jobs() {
                                     <input
                                         type="text"
                                         name="criteria"
-                                        value={newJob.criteria}        
+                                        value={newJob.criteria}
                                         onChange={handleChange}
                                         required
                                         className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -380,6 +395,35 @@ export default function Jobs() {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {isViewDetails && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 mx-4">
+                        <h3 className="text-xl font-bold mb-4">Details Job</h3>
+                        <div className="space-y-4">
+                            <span><b>Name</b></span>
+                            <p>{newJob.title}</p>
+                            <span><b>Description</b></span>
+                            <p>{newJob.description}</p>
+                            <span><b>Position</b></span>
+                            <p>{newJob.position}</p>
+                            <span><b>Criteria</b></span>
+                            <p>{newJob.criteria}</p>
+                        </div>
+                        <div className="flex justify-end space-x-3 mt-6">
+                            <button
+                                type="button"
+                                onClick={() => setIsViewDetails(false)}
+                                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition"
+                            >
+                                Cancel
+                            </button>
+
+                        </div>
+
                     </div>
                 </div>
             )}

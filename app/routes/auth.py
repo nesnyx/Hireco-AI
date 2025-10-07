@@ -4,7 +4,7 @@ from fastapi import (
     APIRouter,
 )
 from pydantic import BaseModel
-from app.ai.service.db import Accounts, get_db
+from app.ai.service.models import Accounts, get_db
 from sqlalchemy.orm import Session
 from app.utils.jwt import generate_token, get_current_user
 import logging

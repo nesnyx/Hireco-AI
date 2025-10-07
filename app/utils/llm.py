@@ -7,8 +7,8 @@ import os
 load_dotenv()
 
 API_KEY = os.getenv("API_KEY")
-# llm = ChatGoogleGenerativeAI(api_key=API_KEY, model="gemini-2.5-flash", temperature=0.1)
-llm = ChatOllama(model="llama3.1:8b",temperature=0.1,base_url="https://crane-primary-singularly.ngrok-free.app")
+llm = ChatGoogleGenerativeAI(api_key=API_KEY, model="gemini-2.0-flash", temperature=0.1)
+# llm = ChatOllama(model="llama3.1:8b",temperature=0.1,base_url="https://crane-primary-singularly.ngrok-free.app")
 
 EMBEDDING_MODEL = "models/embedding-001"
 

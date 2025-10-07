@@ -7,7 +7,7 @@ import os
 
 from requests import Session
 
-from app.ai.service.db import Accounts, get_db
+from app.ai.service.models import Accounts, get_db
 
 load_dotenv()
 

@@ -1,1 +1,28 @@
 @import "tailwindcss";
+
+@layer base {
+    body {
+        @apply bg-gray-900 text-white;
+    }
+}
+
+@layer components {
+    .gradient-border {
+        @apply relative p-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg;
+    }
+
+    .gradient-border-content {
+        @apply bg-gray-800 rounded-md p-4 h-full;
+    }
+
+    .glow-effect {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .crypto-grid {
+        background-image:
+            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+}

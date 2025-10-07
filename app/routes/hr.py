@@ -6,7 +6,7 @@ from fastapi import (
     Path,
 )
 from pydantic import BaseModel
-from app.ai.service.db import CVAnalysis, Job, Accounts, get_db
+from app.ai.service.models import CVAnalysis, Job, Accounts, get_db
 from sqlalchemy.orm import Session
 from app.utils.jwt import get_current_user
 import logging, random, string, os
