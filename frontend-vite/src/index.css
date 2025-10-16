@@ -1,28 +1,89 @@
 @import "tailwindcss";
 
+
+
 @layer base {
     body {
-        @apply bg-gray-900 text-white;
+        @apply bg-slate-950 text-white;
+        font-family: 'Inter', sans-serif;
+        background-image:
+            radial-gradient(at 40% 20%, rgba(120, 119, 198, 0.1) 0px, transparent 50%),
+            radial-gradient(at 80% 0%, rgba(120, 119, 198, 0.1) 0px, transparent 50%),
+            radial-gradient(at 0% 50%, rgba(255, 135, 135, 0.1) 0px, transparent 50%);
     }
 }
 
 @layer components {
     .gradient-border {
-        @apply relative p-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg;
+        @apply relative p-0.5 rounded-xl;
+        background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
     }
 
     .gradient-border-content {
-        @apply bg-gray-800 rounded-md p-4 h-full;
+        @apply bg-slate-900 rounded-lg h-full w-full;
     }
 
     .glow-effect {
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        box-shadow:
+            0 0 20px rgba(59, 130, 246, 0.3),
+            0 0 40px rgba(147, 51, 234, 0.2),
+            0 0 80px rgba(236, 72, 153, 0.1);
+    }
+
+    .text-gradient {
+        background: linear-gradient(45deg, #60a5fa, #a855f7, #ec4899);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
     }
 
     .crypto-grid {
         background-image:
-            linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+            linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px);
         background-size: 20px 20px;
     }
+
+    .floating-animation {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Utility classes */
+.font-inter {
+    font-family: 'Inter', sans-serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }

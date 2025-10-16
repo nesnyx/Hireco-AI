@@ -17,7 +17,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import json
-import datetime
+
 
 Base = declarative_base()
 
@@ -45,7 +45,9 @@ class Accounts(Base):
         passive_deletes=True,
     )
     feedbacks = relationship("UserFeedback", back_populates="account")
-
+    user_subscriptions = relationship(
+        "UserSubscription", back_populates="account", cascade="all, delete-orphan"
+    )
 
 class Job(Base):
     __tablename__ = "jobs"
@@ -216,6 +218,53 @@ class UserFeedback(Base):
     account = relationship("Accounts", back_populates="feedbacks")
 
 
+class Pricing(Base):
+    __tablename__ = "pricing"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    price_per_month = Column(Float, nullable=False)
+    expires_in_days = Column(Integer, nullable=False)
+    max_jobs = Column(Integer, nullable=True)
+    features = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    is_active = Column(Boolean, default=True)
+
+    # Tambahkan relasi balik
+    user_subscriptions = relationship(
+        "UserSubscription", back_populates="pricing", cascade="all, delete-orphan"
+    )
+
+
+class UserSubscription(Base):
+    __tablename__ = "user_subscription"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    account_id = Column(
+        Integer,
+        ForeignKey("accounts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    pricing_id = Column(
+        Integer,
+        ForeignKey("pricing.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    start_date = Column(DateTime(timezone=True), server_default=func.now())
+    end_date = Column(DateTime(timezone=True), nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relasi ke model lain
+    account = relationship("Accounts", back_populates="user_subscriptions")
+    pricing = relationship("Pricing", back_populates="user_subscriptions")
+
+
+
 class AnalyticsLog(Base):
     __tablename__ = "analytics_log"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -227,11 +276,12 @@ class AnalyticsLog(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
-
 Index("ix_embedding_ref_type", EmbeddingIndex.ref_id, EmbeddingIndex.type)
 Index("ix_cv_job_file", CVAnalysis.job_id, CVAnalysis.file_id)
 
-engine = create_engine("sqlite:///./hireco.db", echo=False, connect_args={"check_same_thread": False})
+engine = create_engine(
+    "sqlite:///./hireco.db", echo=False, connect_args={"check_same_thread": False}
+)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 db = SessionLocal()
 

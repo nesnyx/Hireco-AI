@@ -5,51 +5,64 @@ import PricingCard from '../landingPage/PricingCard';
 const PricingSection = () => {
   const plans = [
     {
-      plan: 'Starter',
-      price: 29,
-      period: 'month',
-      description: 'Perfect for small teams getting started',
+      plan: 'Free Tier',
+      price: 'Free',
+      description: 'Perfect for trial and testing',
       features: [
-        'Up to 50 employees',
+        'Max 10 CVs Screening',
         'Basic analytics',
-        'Email support',
-        'Mobile app access',
+        'Comparing Candidates',
         'Basic reporting'
       ]
     },
     {
-      plan: 'Professional',
-      price: 79,
+      plan: 'Starter',
+      price: 19,
       period: 'month',
-      description: 'Advanced features for growing companies',
+      description: 'Perfect for small teams getting started',
       features: [
-        'Up to 500 employees',
-        'Advanced analytics & AI insights',
-        'Priority support',
-        'Custom integrations',
-        'Advanced reporting',
-        'Performance management',
-        'Automated workflows'
-      ],
-      highlighted: true
+        'Max 50 CVs Screening',
+        'Basic analytics',
+        'Integration API',
+        'Comparing Candidates',
+        'Basic reporting'
+      ]
     },
-    {
-      plan: 'Enterprise',
-      price: 199,
-      period: 'month',
-      description: 'Complete solution for large organizations',
-      features: [
-        'Unlimited employees',
-        'Full AI & blockchain features',
-        '24/7 dedicated support',
-        'Custom development',
-        'White-label options',
-        'Advanced security',
-        'Multi-region deployment',
-        'Custom SLA'
-      ],
-      buttonText: 'Contact Sales'
-    }
+    
+    // {
+    //   plan: 'Professional',
+    //   price: 79,
+    //   period: 'month',
+    //   description: 'Advanced features for growing companies',
+    //   features: [
+    //     'Up to 500 employees',
+    //     'Advanced analytics & AI insights',
+    //     'Priority support',
+    //     'Custom integrations',
+    //     'Advanced reporting',
+    //     'Performance management',
+    //     'Automated workflows'
+    //   ],
+    //   highlighted: true,
+    //   buttonText: 'Coming Soon'
+    // },
+    // {
+    //   plan: 'Enterprise',
+    //   price: 199,
+    //   period: 'month',
+    //   description: 'Complete solution for large organizations',
+    //   features: [
+    //     'Unlimited employees',
+    //     'Full AI & blockchain features',
+    //     '24/7 dedicated support',
+    //     'Custom development',
+    //     'White-label options',
+    //     'Advanced security',
+    //     'Multi-region deployment',
+    //     'Custom SLA'
+    //   ],
+    //   buttonText: 'Coming Soon'
+    // }
   ];
 
   return (
@@ -65,20 +78,20 @@ const PricingSection = () => {
           <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-8">
             Choose the perfect plan for your team. All plans include a 14-day free trial.
           </p>
-          
+
           {/* Pricing Toggle */}
-          <div className="inline-flex items-center bg-slate-800 p-1 rounded-xl">
+          {/* <div className="inline-flex items-center bg-slate-800 p-1 rounded-xl">
             <button className="px-6 py-2 text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg">
               Monthly
             </button>
             <button className="px-6 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-lg">
               Annual (Save 20%)
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="flex justify-center items-center gap-8 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <PricingCard key={index} {...plan} />
           ))}

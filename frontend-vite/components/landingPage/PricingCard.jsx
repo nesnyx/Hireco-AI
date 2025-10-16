@@ -8,9 +8,9 @@ const PricingCard = ({ plan, price, period, description, features, highlighted =
   return (
     <div className={`relative ${highlighted ? 'transform scale-105' : ''}`}>
       {highlighted && (
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 mb-5">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-1 rounded-full text-sm font-semibold flex items-center">
-            <Star className="w-4 h-4 mr-1" />
+            <Star className="w-4 mr-1" />
             Most Popular
           </div>
         </div>
@@ -39,6 +39,7 @@ const PricingCard = ({ plan, price, period, description, features, highlighted =
           variant={highlighted ? 'primary' : 'outline'} 
           className="w-full"
           size="lg"
+          href={"/admin/login"}
         >
           {buttonText}
         </Button>

@@ -4,8 +4,9 @@ from fastapi import (
     APIRouter,
 )
 from pydantic import BaseModel
-from app.ai.service.models import Accounts, get_db
+from app.ai.service.models import Accounts, get_db, Pricing, UserSubscription
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 from app.utils.jwt import generate_token, get_current_user
 import logging
 import json
@@ -18,7 +19,6 @@ auth_router = APIRouter(prefix="/auth")
 class RegisterInput(BaseModel):
     email: str
     password: str
-    role: str
     full_name: str
 
 
@@ -43,7 +43,72 @@ async def login(login_input: LoginInput, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     payload = {"id": user.id}
     token = generate_token(payload)
-    return {"token": token, "token_type": "bearer","role":user.role}
+    return {"token": token, "token_type": "bearer", "role": user.role}
+
+
+@auth_router.post("/admin/register")
+async def admin_register(register_input: RegisterInput, db: Session = Depends(get_db)):
+    try:
+        # pastikan transaksi satu blok
+        with db.begin():
+            # ✅ 1. cek existing user
+            existing_user = (
+                db.query(Accounts)
+                .filter(Accounts.email == register_input.email)
+                .first()
+            )
+            if existing_user:
+                raise HTTPException(status_code=400, detail="Email already registered")
+
+            # ✅ 2. buat akun baru
+            profile_data = {
+                "full_name": register_input.full_name,
+                "phone": "",
+                "address": "",
+                "bio": "",
+                "company": "",
+                "type": "",
+            }
+            new_user = Accounts(
+                email=register_input.email,
+                password=register_input.password,
+                role="hr",
+                profile=json.dumps(profile_data),
+            )
+            db.add(new_user)
+            db.flush()  # penting: agar new_user.id tersedia sebelum commit
+
+            # ✅ 3. ambil pricing
+            pricing = db.query(Pricing).filter(Pricing.name == "Free").first()
+            if not pricing:
+                raise HTTPException(status_code=400, detail="Free pricing not found")
+
+            # ✅ 4. buat subscription
+            new_subscription = UserSubscription(
+                account_id=new_user.id,
+                pricing_id=pricing.id,
+                is_active=True,
+                end_date=None,  # pastikan sesuai field di model kamu
+            )
+            db.add(new_subscription)
+
+        # ✅ keluar dari `with db.begin()` otomatis COMMIT jika tidak error
+
+        return {
+            "success": True,
+            "message": "Admin registered successfully",
+            "user": {
+                "id": new_user.id,
+                "email": new_user.email,
+                "role": new_user.role,
+                "created_at": new_user.created_at,
+            },
+        }
+    except HTTPException:
+        raise
+    except SQLAlchemyError as e:
+        db.rollback()  # jaga-jaga jika error di luar blok with
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
 @auth_router.post("/register")
@@ -64,7 +129,7 @@ async def register(register_input: RegisterInput, db: Session = Depends(get_db))
     new_user = Accounts(
         email=register_input.email,
         password=register_input.password,
-        role=register_input.role,  # bisa "user", "admin", dll
+        role="user",  # bisa "user", "admin", dll
         profile=json.dumps(profile_data),
     )
     db.add(new_user)
@@ -98,6 +163,17 @@ async def user_login(login_input: LoginInput, db: Session = Depends(get_db)):
 @auth_router.get("/me")
 async def me(current_user=Depends(get_current_user)):
     return current_user["data"]
+
+
+@auth_router.delete("/delete-account/{id}")
+async def delete_account(id: int, db: Session = Depends(get_db)):
+    user = db.query(Accounts).filter(Accounts.id == id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db.delete(user)
+    db.commit()
+    return {"detail": "User account deleted"}
+
 
 @auth_router.get("/logout")
 async def logout():

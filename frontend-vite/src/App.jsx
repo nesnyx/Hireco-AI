@@ -33,9 +33,6 @@ export default function App() {
 
         <Route path="/admin/login" element={<LoginPage />} />
         <Route path="/user/login" element={<LoginPageUser />} />
-
-
-
         <Route path="*" element={<NotFoundRoute />} />
       </Routes>
     </BrowserRouter>

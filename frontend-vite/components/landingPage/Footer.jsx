@@ -8,27 +8,27 @@ const Footer = () => {
     product: [
       { label: 'Features', href: '#features' },
       { label: 'Pricing', href: '#pricing' },
-      { label: 'Security', href: '#security' },
-      { label: 'Integrations', href: '#integrations' }
+      // { label: 'Security', href: '#security' },
+      // { label: 'Integrations', href: '#integrations' }
     ],
-    company: [
-      { label: 'About Us', href: '#about' },
-      { label: 'Careers', href: '#careers' },
-      { label: 'Blog', href: '#blog' },
-      { label: 'Press', href: '#press' }
-    ],
-    resources: [
-      { label: 'Documentation', href: '#docs' },
-      { label: 'API Reference', href: '#api' },
-      { label: 'Help Center', href: '#help' },
-      { label: 'Status', href: '#status' }
-    ],
-    legal: [
-      { label: 'Privacy Policy', href: '#privacy' },
-      { label: 'Terms of Service', href: '#terms' },
-      { label: 'Cookie Policy', href: '#cookies' },
-      { label: 'GDPR', href: '#gdpr' }
-    ]
+    // company: [
+    //   { label: 'About Us', href: '#about' },
+    //   { label: 'Careers', href: '#careers' },
+    //   { label: 'Blog', href: '#blog' },
+    //   { label: 'Press', href: '#press' }
+    // ],
+    // resources: [
+    //   { label: 'Documentation', href: '#docs' },
+    //   { label: 'API Reference', href: '#api' },
+    //   { label: 'Help Center', href: '#help' },
+    //   { label: 'Status', href: '#status' }
+    // ],
+    // legal: [
+    //   { label: 'Privacy Policy', href: '#privacy' },
+    //   { label: 'Terms of Service', href: '#terms' },
+    //   { label: 'Cookie Policy', href: '#cookies' },
+    //   { label: 'GDPR', href: '#gdpr' }
+    // ]
   };
 
   const socialLinks = [
@@ -48,10 +48,10 @@ const Footer = () => {
               <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-gradient">HRCrypto</span>
+              <span className="text-2xl font-bold text-gradient">Hireco</span>
             </div>
             <p className="text-slate-400 mb-6 max-w-sm">
-              Revolutionary HR management platform powered by AI and secured by blockchain technology.
+              Revolutionary HR management platform powered by AI technology.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => {
@@ -93,7 +93,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-slate-400 text-sm">
-            © 2024 HRCrypto. All rights reserved.
+            © 2025 Hireco. All rights reserved.
           </p>
           <div className="flex items-center space-x-6 mt-4 md:mt-0">
             <div className="flex items-center space-x-2 text-sm text-slate-500">

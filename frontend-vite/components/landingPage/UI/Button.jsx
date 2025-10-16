@@ -1,7 +1,14 @@
-// components/UI/Button.jsx
-import React from 'react';
+import { Link } from 'react-router-dom';
 
-const Button = ({ children, variant = 'primary', size = 'md', className = '', ...props }) => {
+const Button = ({
+    children,
+    variant = 'primary',
+    size = 'md',
+    className = '',
+    to,
+    href,
+    ...props
+}) => {
     const baseClasses = 'inline-flex items-center justify-center font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950';
 
     const variants = {
@@ -18,9 +25,38 @@ const Button = ({ children, variant = 'primary', size = 'md', className = '', ..
         xl: 'px-10 py-5 text-xl rounded-2xl'
     };
 
+    const combinedClasses = `${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`;
+
+    // Jika ada prop 'to', render sebagai Link (React Router)
+    if (to) {
+        return (
+            <Link
+                to={to}
+                className={combinedClasses}
+                {...props}
+            >
+                {children}
+            </Link>
+        );
+    }
+
+    // Jika ada prop 'href', render sebagai anchor tag
+    if (href) {
+        return (
+            <a
+                href={href}
+                className={combinedClasses}
+                {...props}
+            >
+                {children}
+            </a>
+        );
+    }
+
+    // Default: render sebagai button biasa
     return (
         <button
-            className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`}
+            className={combinedClasses}
             {...props}
         >
             {children}

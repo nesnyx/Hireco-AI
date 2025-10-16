@@ -1,7 +1,6 @@
 import { useEffect,useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { getUserMe } from "../../src/api";
-import { toast } from 'react-toastify';
 const isAuthenticated = () => {
     return localStorage.getItem("token") !== null;
 };

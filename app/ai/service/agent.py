@@ -132,3 +132,23 @@ async def analyze_cv_with_criteria(
             "meets_minimum": False,
             "highlights": {"positive": [], "negative": []},
         }
+
+
+# ✅ IMPROVEMENT: Multi-query retrieval strategy
+async def get_targeted_context(retriever, criteria):
+    """Retrieve context yang lebih targeted per aspek"""
+
+    # Query terpisah untuk setiap aspek
+    queries = {
+        "hard_skills": f"Technical skills, programming languages, tools, technologies, certifications related to: {criteria}",
+        "experience": f"Work experience, job roles, responsibilities, achievements, projects related to: {criteria}",
+        "education": f"Education background, degrees, courses relevant to: {criteria}",
+        "summary": "Professional summary, career objective, key strengths",
+    }
+
+    context_by_section = {}
+    for section, query in queries.items():
+        docs = retriever.invoke(query)
+        context_by_section[section] = "\n".join([doc.page_content for doc in docs])
+
+    return context_by_section

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 11,
             "patches": [
                 {
                     "date": 1757549543129,
@@ -16,6 +16,42 @@
                 {
                     "date": 1757638085237,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,9 +6,9 @@\n \n export async function loginHandler({ email, password }) {\n     try {\n         const response = await axios.post(`${BASE_URL}/auth/login`, { email: email, password: password });\n-        console.log(response.data))\n+        console.log(response.data)\n         const data = response.data;\n \n         // Simpan token di cookies (7 hari)\n         localStorage.setItem(\"token\", data.token);\n"
+                },
+                {
+                    "date": 1760079857792,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,9 @@\n import axios from \"axios\";\n \n \n \n-const BASE_URL = \"http://localhost:5666/api/v1\";\n+const BASE_URL = \"https://localhost:5666/api/v1\";\n \n export async function loginHandler({ email, password }) {\n     try {\n         const response = await axios.post(`${BASE_URL}/auth/login`, { email: email, password: password });\n"
+                },
+                {
+                    "date": 1760079864821,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,9 @@\n import axios from \"axios\";\n \n \n \n-const BASE_URL = \"https://localhost:5666/api/v1\";\n+const BASE_URL = \"https://hireco.intelix.fun/api/v1\";\n \n export async function loginHandler({ email, password }) {\n     try {\n         const response = await axios.post(`${BASE_URL}/auth/login`, { email: email, password: password });\n"
+                },
+                {
+                    "date": 1760536622284,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -28,9 +28,9 @@\n }\n \n export async function registerHandler({ email, password, fullName }) {\n     try {\n-        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName, role: \"user\" });\n+        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName});\n         return {\n             msg: \"success\",\n             status: true,\n         };\n@@ -43,8 +43,25 @@\n     }\n }\n \n \n+export async function registerAdminHandler({ email, password, fullName }) {\n+    try {\n+        await axios.post(`${BASE_URL}/auth/admin/register`, { email: email, password: password, full_name: fullName});\n+        return {\n+            msg: \"success\",\n+            status: true,\n+        };\n+    } catch (error) {\n+        console.error(\"Login error:\", error);\n+        return {\n+            msg: \"Something went wrong\",\n+            status: false\n+        };\n+    }\n+}\n+\n+\n export async function getApplicantByHR() {\n     try {\n         const response = await axios.get(`${BASE_URL}/applicant/get-by-hr`, {\n             headers: {\n@@ -198,8 +215,11 @@\n     }\n }\n \n \n+export async function \n+\n+\n export async function downloadPDF(filename) {\n     try {\n         const response = await axios.get(`${BASE_URL}/hr/download/${filename}`, {\n             responseType: 'blob' // penting agar axios handle PDF sebagai blob\n"
+                },
+                {
+                    "date": 1760536629245,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -215,9 +215,9 @@\n     }\n }\n \n \n-export async function \n+export async function uploadMultiple\n \n \n export async function downloadPDF(filename) {\n     try {\n"
+                },
+                {
+                    "date": 1760536635869,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -215,9 +215,9 @@\n     }\n }\n \n \n-export async function uploadMultiple\n+export async function uploadMultipleResumes(formData) {\n \n \n export async function downloadPDF(filename) {\n     try {\n"
+                },
+                {
+                    "date": 1760536643411,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -216,8 +216,20 @@\n }\n \n \n export async function uploadMultipleResumes(formData) {\n+    try {\n+        const response = await axios.post(`${BASE_URL}/applicant/upload-multiple`, formData, {\n+            headers: {\n+                \"Content-Type\": \"multipart/form-data\", // opsional (axios biasanya set otomatis)\n+            }\n+        });\n+        return response.data;\n+    } catch (error) {\n+        console.error(\"Error uploading file:\", error);\n+        throw error;\n+    }\n+}\n \n \n export async function downloadPDF(filename) {\n     try {\n"
+                },
+                {
+                    "date": 1760536662260,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -217,9 +217,9 @@\n \n \n export async function uploadMultipleResumes(formData) {\n     try {\n-        const response = await axios.post(`${BASE_URL}/applicant/upload-multiple`, formData, {\n+        const response = await axios.post(`${BASE_URL}/applicant//upload/batch`, formData, {\n             headers: {\n                 \"Content-Type\": \"multipart/form-data\", // opsional (axios biasanya set otomatis)\n             }\n         });\n"
+                },
+                {
+                    "date": 1760584706484,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -125,9 +125,9 @@\n         const data = response.data;\n         return {\n             msg: \"success\",\n             status: true,\n-            result: data.data\n+            result: data.data.result\n         };\n     } catch (error) {\n         console.error(\"Get Jobs error:\", error);\n         return {\n@@ -217,9 +217,9 @@\n \n \n export async function uploadMultipleResumes(formData) {\n     try {\n-        const response = await axios.post(`${BASE_URL}/applicant//upload/batch`, formData, {\n+        const response = await axios.post(`${BASE_URL}/applicant/upload/batch`, formData, {\n             headers: {\n                 \"Content-Type\": \"multipart/form-data\", // opsional (axios biasanya set otomatis)\n             }\n         });\n"
+                },
+                {
+                    "date": 1760584879185,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -125,9 +125,9 @@\n         const data = response.data;\n         return {\n             msg: \"success\",\n             status: true,\n-            result: data.data.result\n+            result: data.data\n         };\n     } catch (error) {\n         console.error(\"Get Jobs error:\", error);\n         return {\n"
                 }
             ],
             "date": 1757549543129,

@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1757602355950,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1760079604460,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,9 +10,9 @@\n \n api_router.include_router(applicant_router)\n api_router.include_router(auth_router)\n api_router.include_router(hr_router)\n-origins = [\"*\"]\n+origins = [\"https://hireco.intelix.fun\"]\n \n app.include_router(api_router)\n app.add_middleware(\n     CORSMiddleware,\n"
+                },
+                {
+                    "date": 1760079664679,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,9 +5,9 @@\n from fastapi.middleware.cors import CORSMiddleware\n \n app = FastAPI(title=\"Hireco\", version=\"0.1.0\")\n \n-api_router = APIRouter(prefix=\"/api/v1\")\n+api_router = APIRouter()\n \n api_router.include_router(applicant_router)\n api_router.include_router(auth_router)\n api_router.include_router(hr_router)\n"
                 }
             ],
             "date": 1757602355950,

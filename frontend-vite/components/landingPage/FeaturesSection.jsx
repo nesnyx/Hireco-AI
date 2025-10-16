@@ -4,6 +4,7 @@ import FeatureCard from '../landingPage/FeatureCard';
 import {
     Users,
     TrendingUp,
+    CheckCircle,
     Shield,
     Clock,
     DollarSign,
@@ -15,78 +16,54 @@ import {
 
 const FeaturesSection = () => {
     const features = [
+        // {
+        //     icon: Users,
+        //     title: 'Employee Management',
+        //     description: 'Comprehensive employee lifecycle management with advanced analytics.',
+        //     features: [
+        //         'Performance analytics',
+        //         'Automated onboarding',
+        //         'Skills mapping & development'
+        //     ]
+        // },
+        // {
+        //     icon: TrendingUp,
+        //     title: 'Performance Analytics',
+        //     description: 'Data-driven insights to improve workforce productivity and engagement.',
+        //     features: [
+        //         'Predictive performance modeling',
+        //         'Team efficiency dashboards',
+        //         'KPI-based benchmarking'
+        //     ]
+        // },
         {
-            icon: Users,
-            title: 'Employee Management',
-            description: 'Comprehensive employee lifecycle management with advanced analytics.',
+            icon: CheckCircle,
+            title: 'Ease to use',
+            description: 'Just drop your data into the app and start using it. No coding required.',
             features: [
-                'Real-time employee tracking',
-                'Performance analytics',
-                'Automated onboarding',
-                'Skills mapping & development'
+                'Intuitive drag-and-drop interface',
+                'Pre-built templates',
+                'One-click data import/export'
             ]
-        },
-        {
-            icon: TrendingUp,
-            title: 'Performance Analytics',
-            description: 'AI-powered insights to optimize your workforce performance.',
-            features: [
-                'Predictive performance modeling',
-                'Real-time KPI monitoring',
-                'Custom dashboards',
-                'Benchmarking & comparisons'
-            ]
-        },
-        {
-            icon: Shield,
-            title: 'Blockchain Security',
-            description: 'Enterprise-grade security with blockchain-verified data integrity.',
-            features: [
-                'Immutable employee records',
-                'Cryptographic data protection',
-                'Decentralized verification',
-                'GDPR compliant storage'
-            ]
-        },
-        {
-            icon: Clock,
-            title: 'Time Management',
-            description: 'Smart time tracking with automated attendance and scheduling.',
-            features: [
-                'Biometric integration',
-                'Automated timesheets',
-                'Flexible scheduling',
-                'Overtime calculations'
-            ]
-        },
-        {
-            icon: DollarSign,
-            title: 'Payroll Automation',
-            description: 'Streamlined payroll processing with compliance management.',
-            features: [
-                'Multi-currency support',
-                'Tax calculations',
-                'Benefits management',
-                'Compliance reporting'
-            ]
-        },
+        }
+        ,
         {
             icon: Brain,
             title: 'AI Recruitment',
-            description: 'Intelligent hiring with AI-powered candidate matching.',
+            description: 'Intelligent hiring with automated candidate analysis and scoring.',
             features: [
-                'Resume parsing & ranking',
-                'Skill-based matching',
-                'Interview scheduling',
-                'Bias-free selection'
+                'Resume parsing & semantic understanding',
+                'AI-based scoring & ranking',
+
+                'Bias-free decision support'
             ]
         }
     ];
 
     const highlights = [
-        { icon: Globe, title: '50+ Countries', description: 'Global compliance coverage' },
-        { icon: Zap, title: '99.9% Uptime', description: 'Enterprise reliability' },
-        { icon: Award, title: 'ISO Certified', description: 'Security & quality standards' }
+        { icon: Globe, title: '5+ Countries', description: 'Global compliance coverage' },
+        { icon: Zap, title: '40% Uptime', description: 'Enterprise reliability' },
+        
     ];
 
     return (
@@ -100,20 +77,20 @@ const FeaturesSection = () => {
                         for Modern HR Teams
                     </h2>
                     <p className="text-xl text-slate-400 max-w-2xl mx-auto">
-                        Everything you need to manage, analyze, and optimize your workforce
-                        in one comprehensive platform.
+                        Simple tool for screening and ranking candidates using AI, helping you
+                        identify the best talent quickly and efficiently.
                     </p>
                 </div>
 
                 {/* Features Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+                <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-20">
                     {features.map((feature, index) => (
                         <FeatureCard key={index} {...feature} />
                     ))}
                 </div>
 
                 {/* Highlights */}
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 gap-8">
                     {highlights.map((highlight, index) => {
                         const Icon = highlight.icon;
                         return (

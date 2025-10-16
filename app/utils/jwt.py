@@ -7,18 +7,17 @@ import os
 
 from requests import Session
 
-from app.ai.service.models import Accounts, get_db
+from app.ai.service.models import Accounts, get_db, Pricing, UserSubscription
 
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 # Fungsi untuk generate token
-def generate_token(payload: dict, exp_minutes: int = 120):
+def generate_token(payload: dict, exp_minutes: int = 90000):
     """
     Membuat JWT token dengan python-jose
     """
@@ -64,7 +63,19 @@ def get_current_user(
     user = db.query(Accounts).filter(Accounts.id == id).first()
     if user is None:
         raise credentials_exception
-    return {
-        "id":id,
-        "data":user
+    user_subscription =  db.query(UserSubscription).filter(UserSubscription.account_id== id).first()
+    
+    pricing =  {
+        "id": user_subscription.pricing.id,
+        "name": user_subscription.pricing.name,
+        "price": user_subscription.pricing.price_per_month,
+        "max_jobs": user_subscription.pricing.max_jobs,
     }
+    data = {
+        "id": user.id,
+        "email": user.email,
+        "role": user.role,
+        "profile": user.profile,
+        "pricing":pricing
+    }
+    return {"id": id, "data": data}

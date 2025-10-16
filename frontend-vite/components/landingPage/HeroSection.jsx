@@ -6,10 +6,9 @@ import { Play, Users, TrendingUp, Award, Clock } from 'lucide-react';
 
 const HeroSection = () => {
     const stats = [
-        { icon: Users, value: 50000, suffix: '+', label: 'Active Users' },
-        { icon: TrendingUp, value: 98, suffix: '%', label: 'Satisfaction Rate' },
-        { icon: Award, value: 15000, suffix: '+', label: 'Awards Given' },
-        { icon: Clock, value: 99.9, suffix: '%', label: 'Uptime' }
+        { icon: Users, value: 10, suffix: '+', label: 'Active Users' },
+        { icon: TrendingUp, value: 70, suffix: '%', label: 'Satisfaction Rate' },
+        { icon: Clock, value: 40, suffix: '%', label: 'Uptime' }
     ];
 
     return (
@@ -17,10 +16,10 @@ const HeroSection = () => {
             <div className="container mx-auto px-6">
                 <div className="text-center max-w-4xl mx-auto">
                     {/* Hero Badge */}
-                    <div className="inline-flex items-center px-4 py-2 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-300 mb-8 fade-in-up">
+                    {/* <div className="inline-flex items-center px-4 py-2 bg-slate-800 border border-slate-700 rounded-full text-sm text-slate-300 mb-8 fade-in-up">
                         <span className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
                         🚀 Now supporting 50,000+ companies worldwide
-                    </div>
+                    </div> */}
 
                     {/* Main Headline */}
                     <h1 className="text-5xl md:text-7xl font-bold mb-6 fade-in-up" style={{ animationDelay: '0.2s' }}>
@@ -33,8 +32,9 @@ const HeroSection = () => {
 
                     {/* Subtitle */}
                     <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto fade-in-up" style={{ animationDelay: '0.4s' }}>
-                        Transform your workforce management with AI-powered analytics, blockchain-secured data,
-                        and real-time performance insights that drive results.
+                        Revolutionize your hiring process with intelligent CV scoring,
+                        automated candidate evaluation, and AI-driven insights that help
+                        you find the perfect match — faster, smarter, and ease to use.
                     </p>
 
                     {/* CTA Buttons */}
@@ -42,14 +42,14 @@ const HeroSection = () => {
                         <Button size="xl" variant="primary" className="w-full sm:w-auto">
                             Start Free Trial
                         </Button>
-                        <Button size="xl" variant="outline" className="w-full sm:w-auto">
+                        {/* <Button size="xl" variant="outline" className="w-full sm:w-auto">
                             <Play className="w-5 h-5 mr-2" />
                             Watch Demo
-                        </Button>
+                        </Button> */}
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 fade-in-up" style={{ animationDelay: '0.8s' }}>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8 fade-in-up" style={{ animationDelay: '0.8s' }}>
                         {stats.map((stat, index) => {
                             const Icon = stat.icon;
                             return (
@@ -70,7 +70,7 @@ const HeroSection = () => {
                 </div>
 
                 {/* Hero Image/Dashboard Preview */}
-                <div className="mt-20 fade-in-up" style={{ animationDelay: '1s' }}>
+                {/* <div className="mt-20 fade-in-up" style={{ animationDelay: '1s' }}>
                     <div className="relative max-w-6xl mx-auto">
                         <div className="gradient-border glow-effect">
                             <div className="gradient-border-content p-8">
@@ -86,7 +86,7 @@ const HeroSection = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </section>
     );

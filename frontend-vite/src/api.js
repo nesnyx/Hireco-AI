@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 
-const BASE_URL = "http://localhost:5666/api/v1";
+const BASE_URL = "https://hireco.intelix.fun/api/v1";
 
 export async function loginHandler({ email, password }) {
     try {
@@ -29,7 +29,24 @@ export async function loginHandler({ email, password }) {
 
 export async function registerHandler({ email, password, fullName }) {
     try {
-        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName, role: "user" });
+        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName});
+        return {
+            msg: "success",
+            status: true,
+        };
+    } catch (error) {
+        console.error("Login error:", error);
+        return {
+            msg: "Something went wrong",
+            status: false
+        };
+    }
+}
+
+
+export async function registerAdminHandler({ email, password, fullName }) {
+    try {
+        await axios.post(`${BASE_URL}/auth/admin/register`, { email: email, password: password, full_name: fullName});
         return {
             msg: "success",
             status: true,
@@ -187,6 +204,21 @@ export async function getAllJobs() {
 export async function applyJob(formData) {
     try {
         const response = await axios.post(`${BASE_URL}/applicant/upload`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data", // opsional (axios biasanya set otomatis)
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error uploading file:", error);
+        throw error;
+    }
+}
+
+
+export async function uploadMultipleResumes(formData) {
+    try {
+        const response = await axios.post(`${BASE_URL}/applicant/upload/batch`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data", // opsional (axios biasanya set otomatis)
             }
