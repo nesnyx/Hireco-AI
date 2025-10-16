@@ -3,3 +3,4 @@ env
 .lh
 .vscode
 hireco.db
+uploads/*
