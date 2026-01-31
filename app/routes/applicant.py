@@ -44,15 +44,14 @@ async def upload_cv(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
+    
     jobs = db.query(Job).filter(Job.id == job_id).first()
     if not jobs:
         raise HTTPException(status_code=400, detail=f"Not exist job by id {job_id}")
-
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
     file_id = str(uuid.uuid4())
     file_path = UPLOAD_DIR / f"{file_id}.pdf"
-    highlighted_path = UPLOAD_DIR / f"{file_id}_highlighted.pdf"
     try:
 
         with open(file_path, "wb") as f:
@@ -108,17 +107,7 @@ async def upload_cv(
             except Exception as err:
                 logger.error(f"❌ Failed to delete original PDF {file_path}: {err}")
 
-        # Hapus file highlighted jika sudah dibuat
-        if highlighted_path.exists():
-            try:
-                highlighted_path.unlink()
-                logger.info(
-                    f"✅ Deleted highlighted PDF after error: {highlighted_path}"
-                )
-            except Exception as err:
-                logger.error(
-                    f"❌ Failed to delete highlighted PDF {highlighted_path}: {err}"
-                )
+        
 
         # Re-raise error
         raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
@@ -147,9 +136,10 @@ async def get_by_hr(
     current_user=Depends(get_current_user), db: Session = Depends(get_db)
 ):
     try:
+        
         applicant = (
             db.query(CVAnalysis)
-            .join(Job)  # Join CVAnalysis dengan Job
+            .join(Job)  
             .filter(Job.account_id == current_user["id"])
             .all()
         )

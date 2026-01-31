@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 
-const BASE_URL = "https://hireco.intelix.fun/api/v1";
+const BASE_URL = "https://api-hireco.nadinata.org";
 
 export async function loginHandler({ email, password }) {
     try {

@@ -1,5 +1,3 @@
-// components/Pricing/PricingCard.jsx
-import React from 'react';
 import Button from '../landingPage/UI/Button';
 import { Check, Star } from 'lucide-react';
 import GlowCard from '../landingPage/UI/GlowCard';
@@ -20,8 +18,8 @@ const PricingCard = ({ plan, price, period, description, features, highlighted =
         <div className="text-center mb-8">
           <h3 className="text-2xl font-bold mb-2">{plan}</h3>
           <div className="mb-4">
-            <span className="text-4xl font-bold">${price}</span>
-            <span className="text-slate-400">/{period}</span>
+            <span className="text-4xl font-bold">Rp {formatRupiah(price)}</span>
+            <span className="text-slate-400">{period}</span>
           </div>
           <p className="text-slate-400">{description}</p>
         </div>
@@ -49,3 +47,19 @@ const PricingCard = ({ plan, price, period, description, features, highlighted =
 };
 
 export default PricingCard;
+
+
+export function formatRupiah(
+  value,
+  withPrefix
+){
+  const number = typeof value === "string"
+    ? Number(value.replace(/[^0-9]/g, ""))
+    : value;
+
+  if (isNaN(number)) return withPrefix ? "Rp 0" : "0";
+
+  const formatted = new Intl.NumberFormat("id-ID").format(number);
+
+  return withPrefix ? `Rp ${formatted}` : formatted;
+}

@@ -49,9 +49,7 @@ async def login(login_input: LoginInput, db: Session = Depends(get_db)):
 @auth_router.post("/admin/register")
 async def admin_register(register_input: RegisterInput, db: Session = Depends(get_db)):
     try:
-        # pastikan transaksi satu blok
         with db.begin():
-            # ✅ 1. cek existing user
             existing_user = (
                 db.query(Accounts)
                 .filter(Accounts.email == register_input.email)
@@ -60,7 +58,6 @@ async def admin_register(register_input: RegisterInput, db: Session = Depends(ge
             if existing_user:
                 raise HTTPException(status_code=400, detail="Email already registered")
 
-            # ✅ 2. buat akun baru
             profile_data = {
                 "full_name": register_input.full_name,
                 "phone": "",
@@ -76,23 +73,21 @@ async def admin_register(register_input: RegisterInput, db: Session = Depends(ge
                 profile=json.dumps(profile_data),
             )
             db.add(new_user)
-            db.flush()  # penting: agar new_user.id tersedia sebelum commit
+            db.flush()  
 
-            # ✅ 3. ambil pricing
+
             pricing = db.query(Pricing).filter(Pricing.name == "Free").first()
             if not pricing:
                 raise HTTPException(status_code=400, detail="Free pricing not found")
 
-            # ✅ 4. buat subscription
             new_subscription = UserSubscription(
                 account_id=new_user.id,
                 pricing_id=pricing.id,
                 is_active=True,
-                end_date=None,  # pastikan sesuai field di model kamu
+                end_date=None, 
             )
             db.add(new_subscription)
 
-        # ✅ keluar dari `with db.begin()` otomatis COMMIT jika tidak error
 
         return {
             "success": True,
@@ -107,7 +102,7 @@ async def admin_register(register_input: RegisterInput, db: Session = Depends(ge
     except HTTPException:
         raise
     except SQLAlchemyError as e:
-        db.rollback()  # jaga-jaga jika error di luar blok with
+        db.rollback()  
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 

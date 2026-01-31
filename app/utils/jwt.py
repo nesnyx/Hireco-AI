@@ -4,9 +4,7 @@ from jose import JWTError, jwt
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 import os
-
 from requests import Session
-
 from app.ai.service.models import Accounts, get_db, Pricing, UserSubscription
 
 load_dotenv()
@@ -45,25 +43,26 @@ def verify_token(token: str):
 
 
 def get_current_user(
-    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+    token: str = Depends(oauth2_scheme),db: Session = Depends(get_db)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         id: str = payload.get("id")
+        
         if id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-
     user = db.query(Accounts).filter(Accounts.id == id).first()
     if user is None:
         raise credentials_exception
-    user_subscription =  db.query(UserSubscription).filter(UserSubscription.account_id== id).first()
+    user_subscription =  db.query(UserSubscription).filter(UserSubscription.account_id == id).first()
     
     pricing =  {
         "id": user_subscription.pricing.id,

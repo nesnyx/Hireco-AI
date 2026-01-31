@@ -1,5 +1,4 @@
-// components/Pricing/PricingSection.jsx
-import React from 'react';
+
 import PricingCard from '../landingPage/PricingCard';
 
 const PricingSection = () => {
@@ -17,14 +16,14 @@ const PricingSection = () => {
     },
     {
       plan: 'Starter',
-      price: 19,
-      period: 'month',
+      price: 45000,
+      period: '/month',
       description: 'Perfect for small teams getting started',
       features: [
         'Max 50 CVs Screening',
         'Basic analytics',
-        'Integration API',
-        'Comparing Candidates',
+        // 'Integration API',
+        // 'Comparing Candidates',
         'Basic reporting'
       ]
     },
@@ -78,16 +77,6 @@ const PricingSection = () => {
           <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-8">
             Choose the perfect plan for your team. All plans include a 14-day free trial.
           </p>
-
-          {/* Pricing Toggle */}
-          {/* <div className="inline-flex items-center bg-slate-800 p-1 rounded-xl">
-            <button className="px-6 py-2 text-sm font-medium bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg">
-              Monthly
-            </button>
-            <button className="px-6 py-2 text-sm font-medium text-slate-400 hover:text-white rounded-lg">
-              Annual (Save 20%)
-            </button>
-          </div> */}
         </div>
 
         {/* Pricing Cards */}

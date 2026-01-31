@@ -3,7 +3,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from app.ai.chromadb.vectoredb import upsert_applicant_to_vectordb, vectorstore
 from app.ai.service.agent import analyze_cv_with_criteria
-import logging, fitz
+import logging
 from typing import List, Dict
 
 logger = logging.getLogger(__name__)
@@ -56,7 +56,7 @@ async def loader_pdf(
     highlights = result.get("highlights", {"positive": [], "negative": []})
     if highlights["positive"] or highlights["negative"]:
         highlighted_path = file_path.replace(".pdf", "_highlighted.pdf")
-        add_highlights_simple(file_path, highlighted_path, highlights)
+       
         result["highlightead_pdf"] = f"/downloads/{os.path.basename(highlighted_path)}"
     else:
         result["highlighted_pdf"] = None
@@ -64,37 +64,4 @@ async def loader_pdf(
     return result
 
 
-def add_highlights_simple(
-    input_pdf: str, output_pdf: str, highlights: Dict[str, List[str]]
-):
-    """
-    highlights = {
-        "positive": ["Python", "mengembangkan API"],
-        "negative": ["bisa kerja keras", "suka tantangan"]
-    }
-    """
-    doc = fitz.open(input_pdf)
-
-    for page in doc:
-        # 🟨 Highlight positif: kuning
-        for text in highlights.get("positive", []):
-            if not text or not text.strip():
-                continue
-            instances = page.search_for(text)
-            for inst in instances:
-                annot = page.add_highlight_annot(inst)
-                annot.set_colors(stroke=(1, 1, 0))  # kuning
-                annot.update()
-
-        # 🟥 Highlight negatif: merah
-        for text in highlights.get("negative", []):
-            if not text or not text.strip():
-                continue
-            instances = page.search_for(text)
-            for inst in instances:
-                annot = page.add_highlight_annot(inst)
-                annot.set_colors(stroke=(1, 0, 0))  # merah
-                annot.update()
-
-    doc.save(output_pdf)
-    doc.close()
+    

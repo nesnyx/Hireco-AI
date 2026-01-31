@@ -5,10 +5,11 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    port: 5003,
+    port: 3100,
     cors: true,
     allowedHosts: [
-      'hireco.intelix.fun', // tambahkan domain kamu di sini
+      'hireco.nadinata.org',
+      'api-hireco.nadinata.org',
     ],
   }
 })
