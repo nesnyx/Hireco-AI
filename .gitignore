@@ -1,0 +1,14 @@
+env
+.env
+.lh
+.vscode
+hireco.db
+uploads
+app/db
+alembic.ini
+alembic
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
