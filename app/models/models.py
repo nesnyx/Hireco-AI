@@ -20,25 +20,39 @@ def gen_uuid():
 
 class Accounts(Base):
     __tablename__ = "accounts"
-    
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
     email = Column(String(255), unique=True, index=True, nullable=False)
     password = Column(String(255), nullable=True)
-    role = Column(String(50), nullable=True)
     provider = Column(String(50), default="email")
     oauth_id = Column(String(255), nullable=True)
     profile = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-
+    
     # Relationships
     jobs = relationship("Job", back_populates="accounts", cascade="all, delete-orphan")
     feedbacks = relationship("UserFeedback", back_populates="accounts")
     subscriptions = relationship("UserSubscription", back_populates="accounts", cascade="all, delete-orphan")
+    account_roles = relationship("AccountRole", back_populates="account", cascade="all, delete-orphan",uselist=False)
 
+
+class AccountRole(Base):
+    __tablename__ = "account_roles"
+    id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
+    account_id = Column(PG_UUID, ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, unique=True)
+    role_id = Column(PG_UUID, ForeignKey("roles.id", ondelete="CASCADE"), nullable=False)
+    assigned_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    account = relationship("Accounts", back_populates="account_roles")
+    role = relationship("Role", back_populates="account_roles")
+
+class Role(Base):
+    __tablename__ = "roles"
+    id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
+    name = Column(String(50), index=True, nullable=False)
+    account_roles = relationship("AccountRole", back_populates="role")
 
 class Job(Base):
     __tablename__ = "jobs"
-    
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
     title = Column(String(255))
     position = Column(String(255))

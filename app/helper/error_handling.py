@@ -1,0 +1,15 @@
+class PricingAlreadyExists(Exception):
+    pass
+
+
+class PricingNotFound(Exception):
+    pass
+
+class RoleNotFound(Exception):
+    pass
+
+class UserNotFound(Exception):
+    pass
+
+class UserPasswordMismatch(Exception):
+    pass

@@ -1,9 +1,12 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Request
+from fastapi.responses import JSONResponse
 from app.api.routes.applicant import applicant_router
 from app.api.routes.auth import auth_router
 from app.api.routes.hr import hr_router
 from app.api.routes.pricing import pricing_router
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.helper.error_handling import PricingAlreadyExists
 app = FastAPI(title="Hireco", version="0.1.0")
 @app.get("/health")
 def health():
@@ -23,3 +26,12 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE","PATCH"],  # Mengizinkan semua method (GET, POST, dll)
     allow_headers=["*"],  # Mengizinkan semua header
 )
+
+
+
+@app.exception_handler(PricingAlreadyExists)
+async def pricing_exists_handler(request: Request, exc):
+        return JSONResponse(
+        status_code=400,
+        content={"detail": "Pricing plan already exists"},
+        )

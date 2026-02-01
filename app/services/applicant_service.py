@@ -1,0 +1,2 @@
+class ApplicantService:
+    pass

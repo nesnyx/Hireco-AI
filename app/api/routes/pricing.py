@@ -3,24 +3,18 @@ from fastapi import (
     HTTPException,
     APIRouter,
 )
-from app.api.container import get_pricing_service
+
+from app.depedencies.pricing import get_pricing_service
 from app.models.models import get_db, Pricing
 from sqlalchemy.orm import Session
 import logging
-from pydantic import BaseModel
-
+from app.schemas.pricing_schema import CreatePricingSchema
 from app.services.pricing_service import PricingService
 
 logger = logging.getLogger(__name__)
 
 pricing_router = APIRouter(prefix="/pricing")
 
-
-class PricingInput(BaseModel):
-    name: str
-    price: float
-    max_jobs: int
-    expires_in_days: int
 
 @pricing_router.get("")
 async def get_pricing(
@@ -29,30 +23,13 @@ async def get_pricing(
     return service.find()
 
 
-@pricing_router.post("/create")
+@pricing_router.post("")
 async def create_pricing(
-    payload: PricingInput,
-    db: Session = Depends(get_db),
+    payload: CreatePricingSchema,
+    service: PricingService = Depends(get_pricing_service),
 ):
-    existing_pricing = db.query(Pricing).filter(Pricing.name == payload.name).first()
-    if existing_pricing:
-        raise HTTPException(status_code=400, detail="Pricing plan already exists")
-    new_pricing = Pricing(
-        name=payload.name,
-        price_per_month=payload.price,
-        max_jobs=payload.max_jobs,
-        expires_in_days=payload.expires_in_days,
-    )
-    db.add(new_pricing)
-    db.commit()
-    db.refresh(new_pricing)
-    return {
-        "id": new_pricing.id,
-        "name": new_pricing.name,
-        "price_per_month": new_pricing.price_per_month,
-        "max_jobs": new_pricing.max_jobs,
-        "expires_in_days": new_pricing.expires_in_days,
-    }
+    service.find_by_name(payload.name)
+    return service.add_pricing(payload)
 
 
 @pricing_router.delete("/{pricing_id}")
@@ -85,3 +62,5 @@ async def update_pricing(
     db.commit()
     db.refresh(pricing)
     return pricing
+
+
