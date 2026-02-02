@@ -42,8 +42,8 @@ class HrRepository:
         return True
         
     
-    def update_job(self,payload :UpdateJobSchema ):
-        job = self._db_session.get(Job, id)
+    def update_job(self,payload :UpdateJobSchema, id:str , account_id : str):
+        job = self._db_session.query(Job).filter(Job.id == id,Job.account_id == account_id).first()
         if not job:
             raise UserNotFound()
         job.title = payload.title

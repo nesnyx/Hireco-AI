@@ -2,12 +2,16 @@ from fastapi import (
     Depends,
     HTTPException,
     APIRouter,
-    File,
+    File,Body,
     Path,
+
 )
 from pydantic import BaseModel
-from app.models.models import CVAnalysis, Job, Accounts, get_db
+from app.depedencies.hr import get_hr_service
+from app.models.models import CVAnalysis, Job, get_db
 from sqlalchemy.orm import Session
+from app.schemas.job_schema import CreateJobSchema, UpdateJobSchema
+from app.services.hr_service import HrService
 from app.utils.jwt import get_current_user
 import logging, random, string, os
 from sqlalchemy import func
@@ -32,9 +36,8 @@ class JobInput(BaseModel):
 
 
 @hr_router.get("/jobs")
-async def get_all_jobs(db: Session = Depends(get_db)):
-    jobs = db.query(Job).all()
-    return {"data": jobs}
+async def get_all_jobs(id : str = Body(),service : HrService = Depends(get_hr_service)):
+    return service.find_by_account_id(id)
 
 
 @hr_router.get("/jobs/get-by-hr")
@@ -98,89 +101,31 @@ async def get_by_id(
         )
 
 
-@hr_router.post("/jobs/create")
+@hr_router.post("/jobs")
 async def create_job(
-    input: JobInput,
-    db: Session = Depends(get_db),
+    payload : CreateJobSchema,
     current_user=Depends(get_current_user),
+    service : HrService = Depends(get_hr_service)
 ):
-    new_job = Job(
-        title=input.title,
-        position=input.position,
-        criteria=input.criteria,
-        description=input.description,
-        account_id=current_user["id"],
-        token=generate_random_string(),
-    )
-    try:
-        db.add(new_job)
-        db.commit()
-        db.refresh(new_job)
-        return {"message": "Job created", "job": new_job}
-    except Exception as e:
-        db.rollback()
-        print(f"DB Error: {e}")
-        raise HTTPException(status_code=400, detail="Something wrong craete job")
+    return service.create(payload,current_user["id"])
 
 
 @hr_router.delete("/jobs/{job_id}")
 async def delete_job(
     job_id: int,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
+    service : HrService = Depends(get_hr_service)
 ):
-    try:
-        # cari job dulu
-        job = (
-            db.query(Job)
-            .filter(Job.id == job_id, Job.account_id == current_user["id"])
-            .first()
-        )
-
-        if not job:
-            return {"message": "Job not found or not owned by user"}
-
-        db.delete(job)
-        db.commit()
-        return {"message": "Job deleted successfully"}
-
-    except Exception as e:
-        db.rollback()
-        print(f"DB Error: {e}")
-        return {"message": "Failed to delete job"}
+   return service.delete(id=job_id)
 
 
 @hr_router.put("/jobs/{job_id}")
 async def update_job(
     job_id: int,
-    job_data: JobInput,  # semua field wajib ada
-    db: Session = Depends(get_db),
+    payload: UpdateJobSchema,  
+    service : HrService = Depends(get_hr_service),
     current_user=Depends(get_current_user),
 ):
-    try:
-        job = (
-            db.query(Job)
-            .filter(Job.id == job_id, Job.account_id == current_user["id"])
-            .first()
-        )
-
-        if not job:
-            return {"message": "Job not found or not owned by user"}
-
-        job.title = job_data.title
-        job.position = job_data.position
-        job.description = job_data.description
-        job.criteria = job_data.criteria
-
-        db.commit()
-        db.refresh(job)
-
-        return {"message": "Job updated successfully", "job": job_data.dict()}
-
-    except Exception as e:
-        db.rollback()
-        print(f"DB Error: {e}")
-        return {"message": "Failed to update job"}
+    return service.update(payload=payload,account_id=current_user["id"],id=job_id)
 
 
 @hr_router.get("/download/{filename}")
