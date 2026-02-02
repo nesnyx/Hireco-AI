@@ -36,46 +36,9 @@ class JobInput(BaseModel):
 
 
 @hr_router.get("/jobs")
-async def get_all_jobs(id : str = Body(),service : HrService = Depends(get_hr_service)):
-    return service.find_by_account_id(id)
+async def get_all_jobs(current_user=Depends(get_current_user),service : HrService = Depends(get_hr_service)):
+    return service.find_by_account_id(current_user['id'])
 
-
-@hr_router.get("/jobs/get-by-hr")
-async def get_all_jobs(
-    db: Session = Depends(get_db), current_user=Depends(get_current_user)
-):
-    jobs = (
-        db.query(
-            Job.id,
-            Job.title,
-            Job.token,
-            Job.position,
-            Job.description,
-            Job.criteria,
-            func.count(CVAnalysis.id).label("applicant_count"),
-        )
-        .outerjoin(CVAnalysis, Job.id == CVAnalysis.job_id)
-        .filter(Job.account_id == current_user["id"])
-        .group_by(
-            Job.id, Job.title, Job.token, Job.position, Job.description, Job.criteria
-        )
-        .all()
-    )
-
-    return {
-        "data": [
-            {
-                "id": item.id,
-                "title": item.title,
-                "token": item.token,
-                "position": item.position,
-                "description": item.description,
-                "criteria": item.criteria,
-                "applicant_count": item.applicant_count,
-            }
-            for item in jobs
-        ]
-    }
 
 
 @hr_router.get("/jobs/{job_id}")
@@ -112,7 +75,7 @@ async def create_job(
 
 @hr_router.delete("/jobs/{job_id}")
 async def delete_job(
-    job_id: int,
+    job_id: str,
     service : HrService = Depends(get_hr_service)
 ):
    return service.delete(id=job_id)
@@ -120,7 +83,7 @@ async def delete_job(
 
 @hr_router.put("/jobs/{job_id}")
 async def update_job(
-    job_id: int,
+    job_id: str,
     payload: UpdateJobSchema,  
     service : HrService = Depends(get_hr_service),
     current_user=Depends(get_current_user),

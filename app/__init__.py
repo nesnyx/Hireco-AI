@@ -6,8 +6,10 @@ from app.api.routes.hr import hr_router
 from app.api.routes.pricing import pricing_router
 from app.api.routes.role import role_router
 from fastapi.middleware.cors import CORSMiddleware
+from app.helper.api_response import ResponseWrapperMiddleware
 from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
 from app.core.env import env_config
+
 
 app = FastAPI(title="Hireco", version="0.1.0")
 api_router = APIRouter()
@@ -26,6 +28,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE","PATCH"],  # Mengizinkan semua method (GET, POST, dll)
     allow_headers=["*"],  # Mengizinkan semua header
 )
+app.add_middleware(ResponseWrapperMiddleware)
 
 @app.get("/health")
 def health():

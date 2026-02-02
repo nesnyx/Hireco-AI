@@ -12,8 +12,8 @@ class HrService:
     
     def update(self, payload:UpdateJobSchema,id:str,account_id:str):
         return self._hr_repository.update_job(payload,id,account_id)
-    def find_by_account_id(self, id : str):
-        return self._hr_repository.get_by_account_id(id)
+    def find_by_account_id(self, account_id : str):
+        return self._hr_repository.get_by_account_id(account_id)
     
     def find_by_id(self, id : str):
         return self._hr_repository.get_by_id(id)
