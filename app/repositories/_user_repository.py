@@ -22,8 +22,7 @@ class UserRepository:
             profile=json.dumps(profile_data)
         )
         self._db.add(new_user)
-        self._db.commit()
-        self._db.refresh(new_user)
+        self._db.flush()
         return new_user
         
     

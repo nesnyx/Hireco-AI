@@ -12,8 +12,7 @@ class UserSubscriptionRepository:
             pricing_id=pricing_id
         )
         self._db.add(user_subscription)
-        self._db.commit()
-        self._db.refresh(user_subscription)
+        self._db.flush()
         return user_subscription
     
     def get_user_subscription(self,account_id:str):

@@ -28,7 +28,6 @@ async def create_pricing(
     payload: CreatePricingSchema,
     service: PricingService = Depends(get_pricing_service),
 ):
-    service.find_by_name(payload.name)
     return service.add_pricing(payload)
 
 

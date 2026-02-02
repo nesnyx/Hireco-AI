@@ -26,6 +26,5 @@ class RoleRepository:
             role_id=role_id
         )
         self._db.add(account_role)
-        self._db.commit()
-        self._db.refresh(account_role)
+        self._db.flush()
         return account_role

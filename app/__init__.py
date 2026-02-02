@@ -4,10 +4,10 @@ from app.api.routes.applicant import applicant_router
 from app.api.routes.auth import auth_router
 from app.api.routes.hr import hr_router
 from app.api.routes.pricing import pricing_router
+from app.api.routes.role import role_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.helper.error_handling import PricingAlreadyExists, PricingNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
 from app.core.env import env_config
-
 
 app = FastAPI(title="Hireco", version="0.1.0")
 api_router = APIRouter()
@@ -15,6 +15,7 @@ api_router.include_router(applicant_router)
 api_router.include_router(auth_router)
 api_router.include_router(hr_router)
 api_router.include_router(pricing_router)
+api_router.include_router(role_router)
 origins = [env_config.get("ORIGINS")]
 
 app.include_router(api_router)

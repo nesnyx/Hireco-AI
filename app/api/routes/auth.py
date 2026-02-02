@@ -4,7 +4,7 @@ from fastapi import (
     APIRouter,
 )
 from pydantic import BaseModel
-from app.depedencies.user import _get_auth_service, get_auth_service
+from app.depedencies.user import  get_auth_service
 from app.models.models import Accounts, get_db
 from sqlalchemy.orm import Session
 from app.schemas.auth_schema import LoginSchema
@@ -18,18 +18,6 @@ logger = logging.getLogger(__name__)
 
 auth_router = APIRouter(prefix="/auth")
 
-
-
-
-class LoginInput(BaseModel):
-    email: str
-    password: str
-
-
-class UserResponse(BaseModel):
-    id: int
-    email: str
-    role: str
 
 
 @auth_router.post("/login")

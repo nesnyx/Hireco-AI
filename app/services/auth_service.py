@@ -14,13 +14,14 @@ class AuthService:
         if payload.password != existing_account.password:
             raise UserPasswordMismatch()
         payload_jwt = {
-            "id": existing_account.id,
+            "id": str(existing_account.id),
             "email": existing_account.email,
-            "role":existing_account.account_roles
+            "role": str(existing_account.account_roles.role.name)
         }
-        print(payload_jwt)
         jwt_token = generate_token(payload=payload_jwt)
-        return jwt_token
+        return {
+            "token": jwt_token,
+        }
         
     
     def register(self, payload : CreateUserSchema):
