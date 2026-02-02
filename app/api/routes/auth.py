@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from app.depedencies.user import _get_auth_service, get_auth_service
 from app.models.models import Accounts, get_db
 from sqlalchemy.orm import Session
+from app.schemas.auth_schema import LoginSchema
 from app.schemas.user_schema import CreateUserSchema
 from app.services.auth_service import AuthService
 from app.utils.jwt import generate_token, get_current_user
@@ -32,19 +33,11 @@ class UserResponse(BaseModel):
 
 
 @auth_router.post("/login")
-async def login(login_input: LoginInput, db: Session = Depends(get_db)):
-    user = db.query(Accounts).filter(Accounts.email == login_input.email).first()
-    print(user)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-    if user.password != login_input.password:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
-    payload = {"id": user.id}
-    token = generate_token(payload)
-    return {"token": token, "token_type": "bearer", "role": user.role}
+async def login(payload: LoginSchema, service: AuthService = Depends(get_auth_service)):
+   return service.login(payload)
 
 
-@auth_router.post("/admin/register")
+@auth_router.post("/register")
 async def register(payload : CreateUserSchema, service: AuthService = Depends(get_auth_service)):
     return service.register(payload)
 

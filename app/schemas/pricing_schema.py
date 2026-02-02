@@ -7,7 +7,7 @@ class CreatePricingSchema(BaseModel):
     expires_in_days: int
     
     
-class Pricingtype(Enum):
+class PricingType(Enum):
     Free = "Free"
     Standard = "Standard"
     Pro = "Pro"

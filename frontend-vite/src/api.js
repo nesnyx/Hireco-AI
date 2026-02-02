@@ -46,7 +46,7 @@ export async function registerHandler({ email, password, fullName }) {
 
 export async function registerAdminHandler({ email, password, fullName }) {
     try {
-        await axios.post(`${BASE_URL}/auth/admin/register`, { email: email, password: password, full_name: fullName});
+        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName});
         return {
             msg: "success",
             status: true,

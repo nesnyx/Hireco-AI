@@ -20,6 +20,6 @@ class PricingService:
     
     def find_by_name(self, name: str):
         existing_pricing = self._pricing_repo.get_by_name(name)
-        if existing_pricing:
-            raise PricingAlreadyExists()
+        if not existing_pricing:
+            raise PricingNotFound()
         return existing_pricing

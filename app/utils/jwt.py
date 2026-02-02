@@ -1,20 +1,18 @@
 from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
-from dotenv import load_dotenv
+
 from fastapi.security import OAuth2PasswordBearer
-import os
+from app.core.env import env_config
 from requests import Session
-from app.models.models import Accounts, get_db, Pricing, UserSubscription
+from app.models.models import Accounts, get_db,  UserSubscription
 
-load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
+SECRET_KEY = env_config.get("SECRET_KEY")
+ALGORITHM = env_config.get("ALGORITHM")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
-# Fungsi untuk generate token
 def generate_token(payload: dict, exp_minutes: int = 90000):
     """
     Membuat JWT token dengan python-jose
@@ -26,7 +24,6 @@ def generate_token(payload: dict, exp_minutes: int = 90000):
     return token
 
 
-# Fungsi untuk verify token
 def verify_token(token: str):
     """
     Memverifikasi JWT token
@@ -54,7 +51,6 @@ def get_current_user(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         id: str = payload.get("id")
-        
         if id is None:
             raise credentials_exception
     except JWTError:
@@ -73,7 +69,7 @@ def get_current_user(
     data = {
         "id": user.id,
         "email": user.email,
-        "role": user.role,
+        "role": payload.role,
         "profile": user.profile,
         "pricing":pricing
     }

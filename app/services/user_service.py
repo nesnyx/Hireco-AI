@@ -1,14 +1,19 @@
 from app.helper.error_handling import RoleNotFound, UserNotFound
 from app.repositories._role_repository import RoleName
 from app.repositories._user_repository import UserRepository
+from app.schemas.pricing_schema import PricingType
 from app.schemas.user_schema import CreateUserSchema
+from app.services.pricing_service import PricingService
 from app.services.role_service import RoleService
+from app.services.user_subscription_service import UserSubscriptionService
 
 
 class UserService:
-    def __init__(self, user_repository : UserRepository, role_service : RoleService):
+    def __init__(self, user_repository : UserRepository, role_service : RoleService,user_subscription_service: UserSubscriptionService,pricing_service : PricingService):
         self._user_repository = user_repository
         self._role_service = role_service
+        self._user_subscription_service = user_subscription_service
+        self._pricing_service = pricing_service
         
     def create_user(self, payload : CreateUserSchema):
         new_user = self._user_repository.save(payload)
@@ -18,6 +23,11 @@ class UserService:
         self._role_service.assign_role_to_user(
             account_id=new_user.id,
             role_id=existing_role.id
+        )
+        free_pricing = self._pricing_service.find_by_name(PricingType.Free.value)
+        self._user_subscription_service.assign_subscription_to_user(
+            account_id=new_user.id,
+            pricing_id=free_pricing.id
         )
         return new_user
 

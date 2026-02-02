@@ -1,15 +1,12 @@
 import uuid,json
-from datetime import datetime
-from typing import List, Optional
-
+from app.core.env import env_config
 from sqlalchemy import (
     Column, String, Integer, Text, Boolean, DateTime, 
-    Float, ForeignKey, Index, create_engine, func
+    Float, ForeignKey,  create_engine, func
 )
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import relationship, sessionmaker, declarative_base, Mapped, mapped_column
-
+from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 Base = declarative_base()
 
 # --- UTILS ---
@@ -214,7 +211,7 @@ class AnalyticsLog(Base):
 # --- DATABASE SETUP ---
 
 # Ganti dengan kredensial PostgreSQL kamu
-DB_URL = "postgresql://bara:bara123@localhost:5432/hireco_db"
+DB_URL = env_config.get("DATABASE_URL")
 
 engine = create_engine(DB_URL, echo=False, pool_size=10, max_overflow=20)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
@@ -241,7 +238,7 @@ def save_cv_analysis_result(
     pq_json = json.dumps(presentation_quality)  # dict → str
     highlights_json = json.dumps(
         metadata.get("highlights", {})
-    )  # dari result["highlights"]
+    ) 
     try:
         record = CVAnalysis(
             file_id=file_id,
