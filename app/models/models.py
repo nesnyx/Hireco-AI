@@ -88,7 +88,7 @@ class CVAnalysis(Base):
     presentation_quality = Column(JSONB)
     highlights = Column(JSONB) 
     
-    meets_minimum = Column(Boolean, default=False)
+    status = Column(String(50), default="PROCCESED", index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships

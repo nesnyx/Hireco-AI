@@ -4,7 +4,7 @@ import uuid
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from fastapi import UploadFile
-from app.ai.chromadb.vectoredb import upsert_applicant_to_vectordb,vectorstore
+from app.core.vectoredb import upsert_applicant_to_vectordb,vectorstore
 from app.helper.error_handling import JobNotFound
 from app.repositories._applicant_repository import ApplicantRepository
 from app.schemas.applicant_schema import CreateApplicantSchema
