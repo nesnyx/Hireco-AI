@@ -83,12 +83,10 @@ class CVAnalysis(Base):
     # Scores
     score = Column(Float)
     explanation = Column(Text)
-
-    # Menggunakan JSONB untuk performa tinggi di PostgreSQL
     hard_skill = Column(JSONB)
     experience = Column(JSONB)
     presentation_quality = Column(JSONB)
-    highlights = Column(JSONB) # {"positive": [], "negative": []}
+    highlights = Column(JSONB) 
     
     meets_minimum = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

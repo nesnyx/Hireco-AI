@@ -53,14 +53,6 @@ async def loader_pdf(
         source=file_path,
         telp=telp,
     )
-    highlights = result.get("highlights", {"positive": [], "negative": []})
-    if highlights["positive"] or highlights["negative"]:
-        highlighted_path = file_path.replace(".pdf", "_highlighted.pdf")
-       
-        result["highlightead_pdf"] = f"/downloads/{os.path.basename(highlighted_path)}"
-    else:
-        result["highlighted_pdf"] = None
-
     return result
 
 

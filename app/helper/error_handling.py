@@ -16,3 +16,6 @@ class UserPasswordMismatch(Exception):
 
 class InvalidCredentials(Exception):
     pass
+
+class JobNotFound(Exception):
+    pass

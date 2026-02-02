@@ -77,44 +77,12 @@ async def analyze_cv_with_criteria(
     relevant_context = retriever.invoke(
         "Fokus pada tiga aspek utama: pengalaman kerja (relevansi, durasi, pencapaian), kemampuan teknis atau hard skills (kedalaman dan relevansi skill), serta kualitas penyajian CV (kejelasan kalimat, struktur, dan profesionalitas bahasa). Berikan analisis yang objektif, rinci, dan detail namun tetap ringkas serta efisien untuk membantu HR dalam pengambilan keputusan."
     )
-    # END Dalam Tahap pengembangan
     context_str = "\n\n".join([doc.page_content for doc in relevant_context])
     prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
     chain = prompt | llm | JsonOutputParser()
 
     try:
         result = await chain.ainvoke({"cv_text": context_str, "criteria": criteria})
-
-        # 🔽 Ambil teks untuk highlight
-        positive_highlights = []
-        negative_highlights = []
-
-        # Dari hard_skill
-        if "hard_skill" in result and "highlight" in result["hard_skill"]:
-            positive_highlights.extend(result["hard_skill"]["highlight"])
-
-        # Dari experience
-        if "experience" in result and "highlight" in result["experience"]:
-            positive_highlights.extend(result["experience"]["highlight"])
-
-        # Dari presentation_quality (yang perlu diperbaiki)
-        if "presentation_quality" in result:
-            if "highlight_negative" in result["presentation_quality"]:
-                negative_highlights.extend(
-                    result["presentation_quality"]["highlight_negative"]
-                )
-            if (
-                "issues" in result["presentation_quality"]
-            ):  # fallback: jika highlight_negative kosong
-                # Tapi ini teks feedback, bukan teks asli → tidak bisa di-highlight
-                pass
-
-        # Simpan untuk digunakan di loader_pdf
-        result["highlights"] = {
-            "positive": list(set(positive_highlights)),  # hilangkan duplikat
-            "negative": list(set(negative_highlights)),
-        }
-
         return result
 
     except Exception as e:

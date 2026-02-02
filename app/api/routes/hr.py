@@ -1,20 +1,16 @@
 from fastapi import (
     Depends,
-    HTTPException,
+
     APIRouter,
-    File,Body,
-    Path,
+
 
 )
 from pydantic import BaseModel
 from app.depedencies.hr import get_hr_service
-from app.models.models import CVAnalysis, Job, get_db
-from sqlalchemy.orm import Session
 from app.schemas.job_schema import CreateJobSchema, UpdateJobSchema
 from app.services.hr_service import HrService
 from app.utils.jwt import get_current_user
 import logging, random, string, os
-from sqlalchemy import func
 from fastapi.responses import FileResponse
 
 logger = logging.getLogger(__name__)
@@ -38,30 +34,6 @@ class JobInput(BaseModel):
 @hr_router.get("/jobs")
 async def get_all_jobs(current_user=Depends(get_current_user),service : HrService = Depends(get_hr_service)):
     return service.find_by_account_id(current_user['id'])
-
-
-
-@hr_router.get("/jobs/{job_id}")
-async def get_by_id(
-    job_id: int = Path(..., description="Id job yang dicari"),
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
-):
-    try:
-        job = (
-            db.query(Job)
-            .filter(Job.id == job_id, Job.account_id == current_user["id"])
-            .first()
-        )
-        if not job:
-            raise HTTPException(status_code=400, detail=f"Not exist job by id {job_id}")
-        return {"data": job}
-    except Exception as e:
-        db.rollback()
-        print(f"DB Error: {e}")
-        raise HTTPException(
-            status_code=400, detail=f"Something wrong get job by id {job_id}"
-        )
 
 
 @hr_router.post("/jobs")
