@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Request
+from fastapi import FastAPI, APIRouter, Request,status,HTTPException
 from fastapi.responses import JSONResponse
 from app.api.routes.applicant import applicant_router
 from app.api.routes.auth import auth_router
@@ -6,7 +6,7 @@ from app.api.routes.hr import hr_router
 from app.api.routes.pricing import pricing_router
 from app.api.routes.role import role_router
 from fastapi.middleware.cors import CORSMiddleware
-from app.helper.error_handling import PricingAlreadyExists, PricingNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
+from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
 from app.core.env import env_config
 
 app = FastAPI(title="Hireco", version="0.1.0")
@@ -66,4 +66,13 @@ async def user_password_mismatch_handler(request: Request, exc):
         return JSONResponse(
         status_code=401,
         content={"detail": "Invalid Credentials"},
+        )
+        
+        
+@app.exception_handler(InvalidCredentials)
+async def invalid_credentials(request : Request, exc):
+        return HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
         )

@@ -25,5 +25,5 @@ def _get_user_service(repo :UserRepository = Depends(_get_user_repository),role_
     return UserService(repo, role_service,user_subscription_service,pricing_service)
 
 
-def get_auth_service(service : UserService = Depends(_get_user_service)) -> AuthService:
-    return AuthService(service)
+def get_auth_service(service : UserService = Depends(_get_user_service),user_subscription_service : UserSubscriptionService = Depends(_get_user_subscription_service)) -> AuthService:
+    return AuthService(service,user_subscription_service)

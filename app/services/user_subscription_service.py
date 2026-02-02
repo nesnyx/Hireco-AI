@@ -13,7 +13,7 @@ class UserSubscriptionService:
             pricing_id=pricing_id
         )
         
-    def get_user_subscription(self, account_id : str):
+    def find_user_subscription(self, account_id : str):
         existing_subscription = self._user_subscription_repository.get_user_subscription(account_id=account_id)
         if not existing_subscription:
             raise UserNotFound()

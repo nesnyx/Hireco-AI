@@ -1,10 +1,12 @@
 from datetime import datetime, timedelta, timezone
+import json
 from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
 
 from fastapi.security import OAuth2PasswordBearer
 from app.core.env import env_config
 from requests import Session
+from app.helper.error_handling import InvalidCredentials
 from app.models.models import Accounts, get_db,  UserSubscription
 
 
@@ -25,18 +27,13 @@ def generate_token(payload: dict, exp_minutes: int = 90000):
 
 
 def verify_token(token: str):
-    """
-    Memverifikasi JWT token
-    """
     try:
         decoded_payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return decoded_payload
     except jwt.ExpiredSignatureError:
-        print("❌ Token sudah kadaluarsa!")
-        return None
+        raise InvalidCredentials()
     except JWTError:
-        print("❌ Token tidak valid!")
-        return None
+        raise InvalidCredentials()
 
 
 def get_current_user(
@@ -63,14 +60,14 @@ def get_current_user(
     pricing =  {
         "id": user_subscription.pricing.id,
         "name": user_subscription.pricing.name,
-        "price": user_subscription.pricing.price_per_month,
+        "price": user_subscription.pricing.name,
         "max_jobs": user_subscription.pricing.max_jobs,
     }
     data = {
         "id": user.id,
         "email": user.email,
-        "role": payload.role,
-        "profile": user.profile,
+        "role": payload["role"],
+        "profile": json.loads(user.profile),
         "pricing":pricing
     }
     return {"id": id, "data": data}

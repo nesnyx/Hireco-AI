@@ -13,3 +13,6 @@ class UserNotFound(Exception):
 
 class UserPasswordMismatch(Exception):
     pass
+
+class InvalidCredentials(Exception):
+    pass

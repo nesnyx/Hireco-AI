@@ -170,7 +170,6 @@ class UserFeedback(Base):
 
 class Pricing(Base):
     __tablename__ = "pricing"
-
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
     name = Column(String(100), nullable=False)
     description = Column(Text)
@@ -181,7 +180,6 @@ class Pricing(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-
     subscriptions = relationship("UserSubscription", back_populates="pricing")
 
 

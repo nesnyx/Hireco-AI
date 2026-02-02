@@ -26,6 +26,9 @@ class UserRepository:
         return new_user
         
     
-    def find_by_email(self, email :str):
+    def get_by_email(self, email :str):
         return self._db.query(Accounts).filter(Accounts.email == email).first()
+    
+    def get_by_id(self, id : str):
+        return self._db.query(Accounts).filter(Accounts.id == id).first()
     
