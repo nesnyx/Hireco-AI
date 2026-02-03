@@ -43,3 +43,14 @@ class ApplicantRepository:
         self._db_session.commit()
         self._db_session.refresh(applicant)
         return applicant
+    
+    def get_all(self):
+        return self._db_session.query(CVAnalysis).all()
+    
+    def delete(self,id:str):
+        applicant = self._db_session.query(CVAnalysis).filter(CVAnalysis.id == id).first()
+        if not applicant:
+            return ApplicantNotFound()
+        self._db_session.delete(applicant)
+        self._db_session.commit()
+        return True

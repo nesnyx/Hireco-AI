@@ -22,20 +22,21 @@ def heavy_pdf_logic(file_path : str):
         docs = loader.load()
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=30,separators=["\n\n", "\n", ".", " "])
         return text_splitter.split_documents(docs)
+    
+
 class ApplicantService:
     def __init__(self,applicant_repository : ApplicantRepository,hr_service : HrService):
         self._applicant_repository = applicant_repository
         self._hr_service = hr_service
-    
-    
     
     async def _loader_pdf(self,job_id,file_path, file_name, criteria, file_id):
         loop = asyncio.get_event_loop()
         try:
             split_texts = await loop.run_in_executor(executor, heavy_pdf_logic, file_path)
         except Exception as e:
-            print(f"Error loading PDF: {str(e)}")
             raise ValueError("Invalid PDF")
+        
+        
         metadatas = {
             "job_id": job_id,
             "file_id": file_id,
@@ -43,11 +44,13 @@ class ApplicantService:
             "file_name": file_name,
             "type": "cv",
         }
+        
         for doc in split_texts:
             doc.metadata.update(metadatas)
+            
         await upsert_applicant_to_vectordb(
-        documents=split_texts, file_id=file_id, vectorstore=vectorstore
-        )
+            documents=split_texts, file_id=file_id, vectorstore=vectorstore
+            )
         result = await self.analyze_cv_with_criteria(
         job_id=job_id,
         vector_db=vectorstore,
@@ -138,8 +141,6 @@ class ApplicantService:
 
 
     
-    
-    
 
     async def _save_file_pdf(self,file_path:str,file):
         saved_file_paths = (
@@ -202,3 +203,9 @@ class ApplicantService:
                 "meets_minimum": False,
                 "highlights": {"positive": [], "negative": []},
             }
+
+    def find_all(self):
+        return self._applicant_repository.get_all()
+    
+    def remove(self,id:str):
+        return self._applicant_repository.delete(id=id)

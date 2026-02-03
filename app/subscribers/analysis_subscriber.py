@@ -13,8 +13,8 @@ async def handle_pdf_analysis(payload: dict, loader_pdf_func):
     file_path = payload["file_path"]
     filename = payload["filename"]
     job_id = payload["job_id"]
-    applicant_repository = ApplicantRepository(db_session=db)
     try:
+        applicant_repository = ApplicantRepository(db_session=db)
         processed_results = []
         result = await loader_pdf_func(
             job_id=job_id,

@@ -10,25 +10,23 @@ from app.helper.api_response import ResponseWrapperMiddleware
 from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
 from app.core.env import env_config
 from app.subscribers import analysis_subscriber
-
-app = FastAPI(title="Hireco", version="0.1.0")
-api_router = APIRouter()
-api_router.include_router(applicant_router)
-api_router.include_router(auth_router)
-api_router.include_router(hr_router)
-api_router.include_router(pricing_router)
-api_router.include_router(role_router)
 origins = [env_config.get("ORIGINS")]
-
-app.include_router(api_router)
+app = FastAPI(title="Hireco", version="0.1.0")
+app.add_middleware(ResponseWrapperMiddleware)
+print(origins)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Mengizinkan asal tertentu
-    allow_credentials=True,  # Mengizinkan pengiriman cookies
-    allow_methods=["GET", "POST", "PUT", "DELETE","PATCH"],  # Mengizinkan semua method (GET, POST, dll)
-    allow_headers=["*"],  # Mengizinkan semua header
+    allow_origins=['https://hireco.nadinata.org'],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-app.add_middleware(ResponseWrapperMiddleware)
+
+app.include_router(applicant_router)
+app.include_router(auth_router)
+app.include_router(hr_router)
+app.include_router(pricing_router)
+app.include_router(role_router)
+
 
 @app.get("/health")
 def health():
@@ -73,9 +71,9 @@ async def user_password_mismatch_handler(request: Request, exc):
         
         
 @app.exception_handler(InvalidCredentials)
-async def invalid_credentials(request : Request, exc):
-        return HTTPException(
+async def invalid_credentials(request: Request, exc):
+    return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
+        content={"detail": "Could not validate credentials"},
         headers={"WWW-Authenticate": "Bearer"},
-        )
+    )

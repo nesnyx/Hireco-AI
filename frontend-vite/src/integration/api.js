@@ -1,8 +1,41 @@
 import axios from "axios";
-
-
+import { authentication } from "./auth";
 
 const BASE_URL = "https://api-hireco.nadinata.org";
+
+export const api = axios.create({
+    baseURL: BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            console.warn("Sesi telah berakhir. Mengalihkan ke halaman login...");
+            authentication.logout()
+            alert("Sesi Anda telah berakhir, silakan login kembali.");
+        }
+        return Promise.reject(error);
+    }
+);
+
+
 
 export async function loginHandler({ email, password }) {
     try {
@@ -63,7 +96,7 @@ export async function registerAdminHandler({ email, password, fullName }) {
 
 export async function getApplicantByHR() {
     try {
-        const response = await axios.get(`${BASE_URL}/applicant/get-by-hr`, {
+        const response = await axios.get(`${BASE_URL}/applicant`, {
             headers: {
                 "Authorization": "Bearer " + localStorage.getItem("token"),
                 "Content-Type": "application/json"
@@ -116,7 +149,7 @@ export async function createJob({ title, position, description, criteria }) {
 
 export async function getJobByHr() {
     try {
-        const response = await axios.get(`${BASE_URL}/hr/jobs/get-by-hr`, {
+        const response = await axios.get(`${BASE_URL}/hr/jobs`, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem("token")}`,
                 "Content-Type": `application/json`

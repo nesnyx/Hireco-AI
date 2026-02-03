@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { getApplicantByHR, getJobByHr } from "../../src/api";
-
+import { getApplicantByHR, getJobByHr } from "../../integration/api";
+import { BriefcaseBusiness,User2Icon, Calendar,FileUser } from 'lucide-react';
 
 export default function Dashboard() {
     const [jobs, setJobs] = useState([]);
@@ -68,9 +68,7 @@ export default function Dashboard() {
                             <p className="text-3xl font-bold text-white mt-2">{jobs.length}</p>
                         </div>
                         <div className="w-12 h-12 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl flex items-center justify-center border border-blue-500/30">
-                            <svg className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6M8 8v10a2 2 0 002 2h4a2 2 0 002-2V8" />
-                            </svg>
+                           <BriefcaseBusiness className="h-6 w-6 text-blue-400" />
                         </div>
                     </div>
                     <div className="mt-4 flex items-center">
@@ -88,9 +86,7 @@ export default function Dashboard() {
                             </p>
                         </div>
                         <div className="w-12 h-12 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-xl flex items-center justify-center border border-purple-500/30">
-                            <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
+                            <User2Icon className="h-6 w-6 text-purple-400" />
                         </div>
                     </div>
                     <div className="mt-4 flex items-center">
@@ -133,9 +129,7 @@ export default function Dashboard() {
                             </p>
                         </div>
                         <div className="w-12 h-12 bg-gradient-to-r from-orange-600/20 to-red-600/20 rounded-xl flex items-center justify-center border border-orange-500/30">
-                            <svg className="h-6 w-6 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a4 4 0 118 0v4M8 7a4 4 0 118 0v4m0-4V3a4 4 0 11-8 0v4m8 0a4 4 0 11-8 0v4m0-4v4" />
-                            </svg>
+                            <Calendar className="h-6 w-6 text-orange-400" />
                         </div>
                     </div>
                     <div className="mt-4 flex items-center">
@@ -151,9 +145,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-xl font-semibold text-white">Top Jobs</h3>
                         <div className="text-slate-400">
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6M8 8v10a2 2 0 002 2h4a2 2 0 002-2V8" />
-                            </svg>
+                            <BriefcaseBusiness className="h-5 w-5" />
                         </div>
                     </div>
 
@@ -185,9 +177,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between mb-6">
                         <h3 className="text-xl font-semibold text-white">Recent Applicants</h3>
                         <div className="text-slate-400">
-                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
+                            <FileUser className="h-5 w-5" />
                         </div>
                     </div>
 

@@ -84,3 +84,17 @@ async def upload_cv_batch(
         )
     return await service.analyze_batch(job_id=job_id,files=files)
     
+    
+@applicant_router.get("")
+def find_all_applicants(
+    service : ApplicantService = Depends(get_applicant_service)
+):
+    return service.find_all()
+
+
+@applicant_router.delete("/{id}")
+def delete_applicant(
+    id : str,
+    service : ApplicantService = Depends(get_applicant_service)
+):
+    return service.remove(id=id)

@@ -1,5 +1,4 @@
-// components/Layout/Header.jsx
-import React from 'react';
+
 import { Bell, Search, User, TrendingUp } from 'lucide-react';
 
 const Header = () => {

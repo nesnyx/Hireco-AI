@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createJob, deleteJob, getJobByHr, updateJob } from "../../src/api";
+import { createJob, deleteJob, getJobByHr, updateJob } from "../../integration/api";
 import { 
     FaTrash, 
     FaEdit, 

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { FiUploadCloud, FiFileText, FiX, FiChevronsRight, FiBriefcase, FiType } from 'react-icons/fi';
-import { getJobByHr } from '../../src/api';
+import { getJobByHr } from '../../integration/api';
 const FileUploads = () => {
     // --- STATE MANAGEMENT ---
     const [activeTab, setActiveTab] = useState('profile'); // 'profile' atau 'criteria'

@@ -3,27 +3,14 @@ import Applicant from '../../components/admin/Applicants';
 import Jobs from '../../components/admin/Jobs';
 import Dashboard from '../../components/admin/Dashboard';
 import Profile from '../../components/admin/Profile';
-import { getUserMe } from '../../src/api';
 import FileUploads from '../../components/admin/FileUploads';
 import ComparingPage from '../../components/admin/Comparing';
+import useAuthStore from '../../store/authStore';
 
 const DashboardPage = () => {
   const [activePage, setActivePage] = useState('applicant'); // Default page
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    (async () => {
-      try {
-        const userProfile = await getUserMe()
-        setUser(userProfile)
-      } catch (error) {
-        console.log("Caught in useEffect:", error)
-      }
-    })()
-  }, [])
 
-
-
-  // --- Render Content Based on Active Page ---
+  const { user } = useAuthStore()
   const renderContent = () => {
     switch (activePage) {
       case 'dashboard':
@@ -42,7 +29,7 @@ const DashboardPage = () => {
         return <FileUploads />
 
       case 'comparing':
-        return <ComparingPage/>
+        return <ComparingPage />
 
       case 'exporting':
         return <div>Exporting Page</div>

@@ -15,7 +15,7 @@ import {
 
 export default function Profile({ profile }) {
     const avatar = "https://avatar.iran.liara.run/public/49"; // Placeholder avatar URL
-    const detailProfile = JSON.parse(profile?.profile)
+    const detailProfile = profile.profile
 
     const [isEditing, setIsEditing] = useState(false);
     const [editedProfile, setEditedProfile] = useState(profile);
