@@ -1,82 +1,41 @@
 from pathlib import Path
 from typing import List
-import uuid
+import uuid, asyncio
+from concurrent.futures import ProcessPoolExecutor
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from fastapi import UploadFile
 from app.core.vectoredb import upsert_applicant_to_vectordb,vectorstore
 from app.helper.error_handling import JobNotFound
 from app.repositories._applicant_repository import ApplicantRepository
-from app.schemas.applicant_schema import CreateApplicantSchema
+from app.core.prompt import PROMPT_TEMPLATE
 from app.services.hr_service import HrService
 from langchain_core.prompts import ChatPromptTemplate
 from app.utils.llm import llm
 from langchain_core.output_parsers import JsonOutputParser
+from app.core.events import ee, ANALYSIS_STARTED
 
+executor = ProcessPoolExecutor()
 
-PROMPT_TEMPLATE = """
-Anda adalah HR AI yang bertugas mengevaluasi CV kandidat secara objektif berdasarkan kriteria yang diberikan. 
-Lakukan penilaian dalam tiga aspek utama dengan rentang nilai 0-100:
-- Hard Skill
-- Experience
-- Presentation Quality
-
-Kemudian hitung skor keseluruhan (0-100) sebagai ringkasan performa, dan tentukan apakah kandidat memenuhi standar minimum.
-
-Kaidah penting:
-- Hard Skill tidak harus identik dengan kriteria, namun tetap dinilai objektif sesuai kekuatan teknis yang ada.
-- Jika kandidat menunjukkan skill signifikan di luar kriteria, tetap beri bobot positif.
-- Penilaian harus ringkas, objektif, dan informatif, sebagai pendukung HR (bukan pengganti keputusan akhir).
-
-Tambahkan juga identifikasi teks spesifik dari CV:
-- Hard skill penting → highlight kuning
-- Pengalaman kerja relevan → highlight hijau
-- Teks klise/ambigu/kurang profesional → highlight merah
-
-Catatan:
-- Gunakan teks asli persis dari CV (jangan parafrase).
-- Output wajib dalam format JSON valid.
-- Tidak boleh ada komentar/penjelasan tambahan di luar JSON.
-- Semua string harus di-escape dengan benar (\\n untuk baris baru, \\\" untuk tanda kutip).
-- Struktur JSON harus mengikuti format berikut:
-
-Berikan output JSON:
-{{
-  "hard_skill": {{"score": int, "feedback": "str", "highlight": [teks_penting]}},
-  "experience": {{"score": int, "feedback": "str", "highlight": [teks_penting]}},
-  "presentation_quality": {{"score": int, "issues": ["str"], "highlight_negative": [teks_buruk]}},
-  "overall_score": float,
-  "explanation": "str",
-  "meets_minimum": bool
-}}
-
-
-
-CV:
-{cv_text}
-
-Kriteria:
-{criteria}
-
-"""
-
-
+def heavy_pdf_logic(file_path : str):
+        loader = PyPDFLoader(file_path)
+        docs = loader.load()
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=30,separators=["\n\n", "\n", ".", " "])
+        return text_splitter.split_documents(docs)
 class ApplicantService:
     def __init__(self,applicant_repository : ApplicantRepository,hr_service : HrService):
         self._applicant_repository = applicant_repository
         self._hr_service = hr_service
     
     
+    
     async def _loader_pdf(self,job_id,file_path, file_name, criteria, file_id):
+        loop = asyncio.get_event_loop()
         try:
-            loader = PyPDFLoader(file_path)
-            docs = loader.load()
+            split_texts = await loop.run_in_executor(executor, heavy_pdf_logic, file_path)
         except Exception as e:
-            raise ValueError("Invalid PDF file")
-        text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500, chunk_overlap=30, separators=["\n\n", "\n", ".", " "]
-        )
-        split_texts = text_splitter.split_documents(docs)
+            print(f"Error loading PDF: {str(e)}")
+            raise ValueError("Invalid PDF")
         metadatas = {
             "job_id": job_id,
             "file_id": file_id,
@@ -86,7 +45,7 @@ class ApplicantService:
         }
         for doc in split_texts:
             doc.metadata.update(metadatas)
-        upsert_applicant_to_vectordb(
+        await upsert_applicant_to_vectordb(
         documents=split_texts, file_id=file_id, vectorstore=vectorstore
         )
         result = await self.analyze_cv_with_criteria(
@@ -99,6 +58,33 @@ class ApplicantService:
 
         )
         return result
+    
+    async def analyze(self,job_id : str,file:UploadFile):
+        UPLOAD_DIR = Path("uploads")
+        UPLOAD_DIR.mkdir(exist_ok=True)
+        job = self._hr_service.find_by_id(id=job_id)           
+        if not job:
+            raise JobNotFound()         
+        file_id = str(uuid.uuid4())
+        file_path = UPLOAD_DIR / f"{file_id}.pdf"                  
+        with open(file_path, "wb") as f:
+            f.write(await file.read())
+        event_payload = {
+            "job_id": job_id,
+            "file_id": file_id,
+            "file_path": str(file_path),
+            "criteria": job.criteria,
+            "filename": file.filename,
+        }
+        ee.emit(ANALYSIS_STARTED, event_payload, self._loader_pdf)
+        return {
+            "status": "processing",
+            "file_id": file_id,
+            "message": "Analisis dimulai di background"
+        }
+    
+    
+    
     
     async def analyze_batch(self,job_id : str,files:List[UploadFile]):
         UPLOAD_DIR = Path("uploads")
@@ -153,65 +139,7 @@ class ApplicantService:
 
     
     
-    async def analyze(self,job_id : str,file:UploadFile):
-        UPLOAD_DIR = Path("uploads")
-        UPLOAD_DIR.mkdir(exist_ok=True)
-        processed_results = []
-        job = self._hr_service.find_by_id(id=job_id)           
-        if not job:
-            raise JobNotFound()         
-        file_id = str(uuid.uuid4())
-        file_path = UPLOAD_DIR / f"{file_id}.pdf"                  
-        with open(file_path, "wb") as f:
-            f.write(await file.read())
-        result = await self._loader_pdf(
-                job_id=job_id,
-                file_id=file_id,
-                file_path=str(file_path),
-                file_name=file.filename,
-                criteria=job.criteria,
-            )
-        applicant_name = result.get("metadata", {}).get("name", "N/A")
-        applicant_email = result.get("metadata", {}).get("email", "N/A")
-        applicant_telp = result.get("metadata", {}).get("phone", "N/A")
-        processed_results.append(
-                {
-                    "file_id": file_id,
-                    "filename": file.filename,
-                    "score": result["overall_score"],
-                    "name": applicant_name,
-                    "email": applicant_email,
-                    "status": "success",
-                }
-            )
-        
-        payload = {
-                "file_id":file_id,
-                "name":applicant_name,
-                "email":applicant_email,
-                "telp":applicant_telp,
-                "filename":str(file_path),
-                "score":result["overall_score"],
-                "explanation":result["explanation"],
-                "experience":result["experience"],
-                "presentation_quality":result["presentation_quality"],
-                "hard_skill":result["hard_skill"],
-            }
-        payload = CreateApplicantSchema(
-            file_id=file_id,
-            name=applicant_name,
-            email=applicant_email,
-            telp=applicant_telp,
-            filename=str(file_path),
-            score=result["overall_score"],
-            explanation=result["explanation"],
-            experience=result["experience"],
-            presentation_quality=result["presentation_quality"],
-            hard_skill=result["hard_skill"],
-            job_id=job_id,
-        )
-        self._applicant_repository.save(payload)
-        return processed_results
+    
 
     async def _save_file_pdf(self,file_path:str,file):
         saved_file_paths = (
@@ -248,7 +176,7 @@ class ApplicantService:
             }
         )
 
-        relevant_context = retriever.invoke(
+        relevant_context = await retriever.ainvoke(
             "Fokus pada tiga aspek utama: pengalaman kerja (relevansi, durasi, pencapaian), kemampuan teknis atau hard skills (kedalaman dan relevansi skill), serta kualitas penyajian CV (kejelasan kalimat, struktur, dan profesionalitas bahasa). Berikan analisis yang objektif, rinci, dan detail namun tetap ringkas serta efisien untuk membantu HR dalam pengambilan keputusan."
         )
         context_str = "\n\n".join([doc.page_content for doc in relevant_context])

@@ -10,6 +10,8 @@ class RoleNotFound(Exception):
 
 class UserNotFound(Exception):
     pass
+class ApplicantNotFound(Exception):
+    pass
 
 class UserPasswordMismatch(Exception):
     pass
@@ -19,3 +21,4 @@ class InvalidCredentials(Exception):
 
 class JobNotFound(Exception):
     pass
+

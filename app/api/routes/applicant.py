@@ -40,6 +40,7 @@ async def upload_cv(
     file: UploadFile = File(...),
     service : ApplicantService = Depends(get_applicant_service)
 ):
+    
     return await service.analyze(job_id=job_id,file=file)
 
 

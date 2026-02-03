@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.helper.api_response import ResponseWrapperMiddleware
 from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
 from app.core.env import env_config
-
+from app.subscribers import analysis_subscriber
 
 app = FastAPI(title="Hireco", version="0.1.0")
 api_router = APIRouter()

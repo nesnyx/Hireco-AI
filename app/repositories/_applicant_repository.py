@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from app.helper.error_handling import ApplicantNotFound
 from app.models.models import CVAnalysis
 from app.schemas.applicant_schema import CreateApplicantSchema
 
@@ -33,3 +34,12 @@ class ApplicantRepository:
         self._db_session.commit()
         self._db_session.refresh(new_applicant)
         return new_applicant
+    
+    def update_status(self,id:str,status:str):
+        applicant = self._db_session.query(CVAnalysis).filter(CVAnalysis.id == id).first()
+        if not applicant:
+            return ApplicantNotFound()
+        applicant.status = status
+        self._db_session.commit()
+        self._db_session.refresh(applicant)
+        return applicant
