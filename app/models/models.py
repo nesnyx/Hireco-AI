@@ -204,72 +204,12 @@ class AnalyticsLog(Base):
     duration_ms = Column(Integer)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-# --- DATABASE SETUP ---
-
-# Ganti dengan kredensial PostgreSQL kamu
 DB_URL = env_config.get("DATABASE_URL")
 
 engine = create_engine(DB_URL, echo=False, pool_size=10, max_overflow=20)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 db = SessionLocal()
-
-
-def save_cv_analysis_result(
-    name,
-    email,
-    telp,
-    job_id,
-    file_id,
-    filename,
-    score,
-    explanation,
-    experience,
-    hard_skill,
-    presentation_quality,
-    metadata,
-):
-    hard_skill_json = json.dumps(hard_skill)  # dict → str
-    experience_json = json.dumps(experience)  # dict → str
-    pq_json = json.dumps(presentation_quality)  # dict → str
-    highlights_json = json.dumps(
-        metadata.get("highlights", {})
-    ) 
-    try:
-        record = CVAnalysis(
-            file_id=file_id,
-            job_id=job_id,
-            name=name,
-            email=email,
-            telp=telp,
-            filename=filename,
-            score=score,
-            explanation=explanation,
-            hard_skill=hard_skill_json,
-            experience=experience_json,
-            presentation_quality=pq_json,
-            highlights=highlights_json,
-            meets_minimum=metadata.get("meets_minimum", False),
-        )
-        db.add(record)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        print(f"DB Error: {e}")
-    finally:
-        db.close()
-
-
-def save_account(email, password, role):
-    try:
-        record = Accounts(email=email, password=password, role=role)
-        db.add(record)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        print(f"DB Error: {e}")
-    finally:
-        db.close()
 
 
 def get_db():

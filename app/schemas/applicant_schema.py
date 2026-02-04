@@ -1,18 +1,20 @@
 from pydantic import BaseModel
-from typing import Any
+from typing import Optional, Any
+
 class CreateApplicantSchema(BaseModel):
-    file_id : str
-    name : str 
-    email:str 
-    telp : str
-    filename : str
-    score:float
-    job_id : str
-    explanation : Any
-    hard_skill : Any
-    experience : Any
-    presentation_quality: Any
-    
+    file_id: Optional[str] = None
+    name: Optional[str] = None
+    email: Optional[str] = None
+    telp: Optional[str] = None
+    filename: Optional[str] = None
+    score: Optional[float] = None
+    job_id: Optional[str] = None
+
+    explanation: Optional[Any] = None
+    hard_skill: Optional[Any] = None
+    experience: Optional[Any] = None
+    presentation_quality: Optional[Any] = None
+
 
     
     

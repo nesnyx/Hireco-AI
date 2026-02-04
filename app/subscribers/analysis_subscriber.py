@@ -23,9 +23,9 @@ async def handle_pdf_analysis(payload: dict, loader_pdf_func):
             criteria=payload["criteria"],
             file_id=file_id,
         )
-        applicant_name = result.get("metadata", {}).get("name", "N/A")
-        applicant_email = result.get("metadata", {}).get("email", "N/A")
-        applicant_telp = result.get("metadata", {}).get("phone", "N/A")
+        applicant_name = result.get("name", "N/A")
+        applicant_email = result.get("email", "N/A")
+        applicant_telp = result.get("phone", "N/A")
         processed_results.append(
                 {
                     "file_id": file_id,
@@ -49,8 +49,7 @@ async def handle_pdf_analysis(payload: dict, loader_pdf_func):
             hard_skill=result["hard_skill"],
             job_id=job_id,
         )
-        save_applicant = applicant_repository.save(payload)
-        applicant_repository.update_status(id=save_applicant.id, status="COMPLETE")
+        applicant_repository.update(file_id,payload,"COMPLETED")
         logging.info(f"✅ Selesai processing untuk file_id: {file_id}")
     except Exception as e:
         logging.error(f"❌ Gagal processing untuk file_id: {file_id}. Error: {str(e)}")

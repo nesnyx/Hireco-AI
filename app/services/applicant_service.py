@@ -9,6 +9,7 @@ from app.core.vectoredb import upsert_applicant_to_vectordb,vectorstore
 from app.helper.error_handling import JobNotFound
 from app.repositories._applicant_repository import ApplicantRepository
 from app.core.prompt import PROMPT_TEMPLATE
+from app.schemas.applicant_schema import CreateApplicantSchema
 from app.services.hr_service import HrService
 from langchain_core.prompts import ChatPromptTemplate
 from app.utils.llm import llm
@@ -79,13 +80,18 @@ class ApplicantService:
             "criteria": job.criteria,
             "filename": file.filename,
         }
+        paylaod = CreateApplicantSchema(
+            job_id=job_id,
+            filename=file.filename,
+            file_id= file_id
+        )
+        self._applicant_repository.save(payload=paylaod)
         ee.emit(ANALYSIS_STARTED, event_payload, self._loader_pdf)
         return {
             "status": "processing",
             "file_id": file_id,
             "message": "Analisis dimulai di background"
         }
-    
     
     
     
@@ -108,9 +114,9 @@ class ApplicantService:
                 file_name=file.filename,
                 criteria=job.criteria,
             )
-            applicant_name = result.get("metadata", {}).get("name", "N/A")
-            applicant_email = result.get("metadata", {}).get("email", "N/A")
-            applicant_telp = result.get("metadata", {}).get("phone", "N/A")
+            applicant_name = result.get("name", "N/A")
+            applicant_email = result.get("email", "N/A")
+            applicant_telp = result.get("phone", "N/A")
             processed_results.append(
                 {
                     "file_id": file_id,
@@ -187,9 +193,8 @@ class ApplicantService:
         try:
             result = await chain.ainvoke({"cv_text": context_str, "criteria": criteria})
             return result
-
         except Exception as e:
-        
+
             return {
                 "hard_skill": {"score": 0, "feedback": ""},
                 "experience": {"score": 0, "feedback": ""},
@@ -209,3 +214,6 @@ class ApplicantService:
     
     def remove(self,id:str):
         return self._applicant_repository.delete(id=id)
+    
+    def update(self, payload : CreateApplicantSchema,status :str):
+        return self._applicant_repository.update(payload)

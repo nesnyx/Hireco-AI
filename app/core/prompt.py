@@ -12,15 +12,12 @@ Kaidah penting:
 - Jika kandidat menunjukkan skill signifikan di luar kriteria, tetap beri bobot positif.
 - Penilaian harus ringkas, objektif, dan informatif, sebagai pendukung HR (bukan pengganti keputusan akhir).
 
-Tambahkan juga identifikasi teks spesifik dari CV:
-- Hard skill penting → highlight kuning
-- Pengalaman kerja relevan → highlight hijau
-- Teks klise/ambigu/kurang profesional → highlight merah
 
 Catatan:
 - Gunakan teks asli persis dari CV (jangan parafrase).
 - Output wajib dalam format JSON valid.
 - Tidak boleh ada komentar/penjelasan tambahan di luar JSON.
+- Temukan Informasi Pribadi seperti Name, Telepon, dan Email.
 - Semua string harus di-escape dengan benar (\\n untuk baris baru, \\\" untuk tanda kutip).
 - Struktur JSON harus mengikuti format berikut:
 
@@ -31,7 +28,9 @@ Berikan output JSON:
   "presentation_quality": {{"score": int, "issues": ["str"], "highlight_negative": [teks_buruk]}},
   "overall_score": float,
   "explanation": "str",
-  "meets_minimum": bool
+  "name":"str",
+  "phone":"str",
+  "email":"str"
 }}
 
 

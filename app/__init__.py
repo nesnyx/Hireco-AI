@@ -13,7 +13,6 @@ from app.subscribers import analysis_subscriber
 origins = [env_config.get("ORIGINS")]
 app = FastAPI(title="Hireco", version="0.1.0")
 app.add_middleware(ResponseWrapperMiddleware)
-print(origins)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=['https://hireco.nadinata.org'],

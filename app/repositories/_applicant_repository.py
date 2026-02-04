@@ -44,6 +44,31 @@ class ApplicantRepository:
         self._db_session.refresh(applicant)
         return applicant
     
+    def update(self, id : str,payload : CreateApplicantSchema, status:str):
+        applicant = (
+        self._db_session
+            .query(CVAnalysis)
+            .filter(CVAnalysis.file_id == id)
+            .first()
+        )
+        if not applicant:
+            return ApplicantNotFound()
+        applicant.file_id = payload.file_id
+        applicant.name = payload.name
+        applicant.email = payload.email
+        applicant.telp = payload.telp
+        applicant.filename = payload.filename
+        applicant.score = payload.score
+        applicant.job_id = payload.job_id
+        applicant.explanation = payload.explanation
+        applicant.hard_skill = payload.hard_skill
+        applicant.experience = payload.experience
+        applicant.presentation_quality = payload.presentation_quality
+        applicant.status = status
+        self._db_session.commit()
+        self._db_session.refresh(applicant)
+        return applicant
+    
     def get_all(self):
         return self._db_session.query(CVAnalysis).all()
     
