@@ -6,6 +6,7 @@ import NotFoundRoute from "../src/pages/NotFound";
 import ProtectedRoute from "../src/layout/ProtectedLayout/admin";
 import Home from "../src/pages/guest/Home";
 import LandingPage from "../src/pages/guest/LandingPage";
+import GuestLayout from "./layout/MainLayout/guestLayout";
 
 
 export default function App() {
@@ -13,16 +14,13 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Admin Protected Routes */}
-        <Route>
+        <Route element={<GuestLayout/>}>
           <Route path="/" element={<LandingPage />} />
-        </Route>
-        <Route>
-          <Route path="/admin/dashboard/analytics" element={<Home />} />
+          <Route path="/admin/login" element={<LoginPage />} />
         </Route>
         <Route element={<ProtectedRoute />}>
           <Route path="/admin/dashboard" element={<DashboardPage />} />
         </Route>
-        <Route path="/admin/login" element={<LoginPage />} />
         <Route path="*" element={<NotFoundRoute />} />
       </Routes>
     </BrowserRouter>

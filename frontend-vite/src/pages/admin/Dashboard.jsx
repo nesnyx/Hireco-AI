@@ -89,7 +89,7 @@ const DashboardPage = () => {
 
                   {
                     key: 'file-uploads',
-                    label: 'FileUploads',
+                    label: 'Analysis CV',
 
                   },
                   {

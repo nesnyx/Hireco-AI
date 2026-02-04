@@ -3,15 +3,13 @@ import { DateTime } from "luxon";
 import { downloadPDF } from "../../integration/api";
 
 export function DetailModal({ app, onClose, getScoreBadge, safeParse }) {
-  // Parsing detail data secara aman
-  const experience = safeParse(app.experience);
-  const hardSkill = safeParse(app.hard_skill);
-  const presentation = safeParse(app.presentation_quality);
-
+  const experience = app.experience
+  const hardSkill = app.hard_skill
+  const presentation = app.presentation_quality
   const breakdown = [
     { key: "exp", label: "Experience", data: experience },
     { key: "skill", label: "Hard Skills", data: hardSkill },
-    { key: "pres", label: "Presentation", data: presentation },
+    // { key: "pres", label: "Presentation", data: presentation },
   ];
 
   const handleDownload = () => {
@@ -73,7 +71,7 @@ export function DetailModal({ app, onClose, getScoreBadge, safeParse }) {
           {/* Breakdown Grid */}
           <section>
             <h5 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-3">Score Breakdown</h5>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {breakdown.map((item) => (
                 <div key={item.key} className="bg-slate-800 border border-slate-700 rounded-xl p-4">
                   <div className="flex justify-between items-start mb-2">

@@ -3,12 +3,11 @@ import { downloadPDF } from "../../integration/api";
 import { DateTime } from "luxon";
 import { FaFilePdf, FaEye, FaTrash, FaUser, FaEnvelope, FaPhone, FaCalendar, FaStar } from "react-icons/fa";
 import useApplicantStore from "../../store/applicantStore";
-import { DetailModal } from "./DetailModal";
-import { DeleteModal } from "./DeleteModal";
+import { DetailModal } from "../applicant/DetailModal";
+import { DeleteModal } from "../applicant/DeleteModal";
 
 export default function Applicant() {
     const { data, findAll, removeApplicant } = useApplicantStore();
-    
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
@@ -26,7 +25,6 @@ export default function Applicant() {
         );
     }, [data, searchTerm]);
 
-    // Stats calculation
     const stats = useMemo(() => {
         const total = data?.length || 0;
         const highScores = data?.filter(app => app.score >= 80).length || 0;
@@ -56,7 +54,6 @@ export default function Applicant() {
         return { bg: "bg-red-900/30", text: "text-red-400", border: "border-red-500/30" };
     };
 
-    // Helper untuk parsing JSON safe
     const safeParse = (str) => {
         try { return JSON.parse(str); } 
         catch (e) { return { score: 0, feedback: "", issues: "" }; }
@@ -143,7 +140,6 @@ export default function Applicant() {
                 </div>
             </div>
 
-            {/* Modals... (Gunakan state selectedApplicant dan deleteTarget) */}
             {selectedApplicant && (
                 <DetailModal 
                     app={selectedApplicant} 

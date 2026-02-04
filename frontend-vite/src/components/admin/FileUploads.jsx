@@ -28,9 +28,9 @@ const FileUploads = () => {
                 setIsLoadingJobs(true);
                 try {
                     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulasi API call
-                    console.log("Fetching jobs from API...");
+                
                     const dummyJobs = await getJobByHr();
-                    console.log("Response from API:", dummyJobs);
+                   
 
                     // handle both single object and array response
                     if (Array.isArray(dummyJobs.result)) {
@@ -42,7 +42,7 @@ const FileUploads = () => {
                     }
                     setError(null);
                 } catch (err) {
-                    console.log("Error fetching jobs:", err);
+                   
                     setJobError('Gagal memuat profil pekerjaan.');
                 } finally {
                     setIsLoadingJobs(false);
