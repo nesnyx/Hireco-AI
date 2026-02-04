@@ -4,10 +4,19 @@ from sqlalchemy import (
     Column, String, Integer, Text, Boolean, DateTime, 
     Float, ForeignKey,  create_engine, func
 )
+from enum import Enum
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship, sessionmaker, declarative_base
 Base = declarative_base()
+
+
+class CreditSourceEnum(str, Enum):
+    PURCHASE = "purchase"     # beli paket / renew
+    USAGE = "usage"           # pemakaian credit
+    BONUS = "bonus"           # promo / manual
+    REFUND = "refund"         # refund payment
+    ADJUSTMENT = "adjustment" # admin adjustment
 
 # --- UTILS ---
 def gen_uuid():
@@ -183,19 +192,193 @@ class Pricing(Base):
 
 class UserSubscription(Base):
     __tablename__ = "user_subscription"
-
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
     account_id = Column(PG_UUID, ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
     pricing_id = Column(PG_UUID, ForeignKey("pricing.id", ondelete="SET NULL"), index=True)
-    start_date = Column(DateTime(timezone=True), server_default=func.now())
+    start_date = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
     end_date = Column(DateTime(timezone=True))
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    status = Column(
+        String(20),
+        default="active"
+    )
+    # active | expired | cancelled
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
     deleted_at = Column(DateTime(timezone=True), nullable=True)
     accounts = relationship("Accounts", back_populates="subscriptions")
     pricing = relationship("Pricing", back_populates="subscriptions")
+    payments = relationship("UserSubscription", back_populates="payments", cascade="all, delete-orphan")
+    credits = relationship(
+        "SubscriptionCredit",
+        back_populates="subscription",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+class SubscriptionCredit(Base):
+    __tablename__ = "subscription_credits"
+
+    id = Column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        default=gen_uuid
+    )
+
+    subscription_id = Column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("user_subscription.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+
+    source = Column(
+        String(20),
+        nullable=False
+    )
+    # purchase | usage | bonus | refund | adjustment
+
+    amount = Column(
+        Integer,
+        nullable=False
+    )
+    # +50, -1, -5, etc
+
+    expires_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+    # credit expiry (biasanya sama dengan subscription.end_date)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    subscription = relationship(
+        "UserSubscription",
+        back_populates="credits"
+    )
 
 
+class Payment(Base):
+    __tablename__ = "payments"
+
+    id = Column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        default=gen_uuid
+    )
+
+    subscription_id = Column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("user_subscription.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+
+    provider = Column(
+        String(30),
+        nullable=False
+    )
+    # midtrans | xendit | stripe
+
+    provider_reference = Column(
+        String(100),
+        nullable=True,
+        index=True
+    )
+
+    payment_type = Column(
+        String(30),
+        nullable=True
+    )
+    # gopay | qris | bank_transfer | cc
+
+    amount = Column(
+        Integer,
+        nullable=False
+    )
+
+    status = Column(
+        String(20),
+        default="pending",
+        index=True
+    )
+    # pending | success | failed | expired | refunded
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    subscription = relationship(
+        "UserSubscription",
+        back_populates="payments"
+    )
+
+    events = relationship(
+        "PaymentEvent",
+        back_populates="payment",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
+
+class PaymentEvent(Base):
+    __tablename__ = "payment_events"
+
+    id = Column(
+        PG_UUID(as_uuid=True),
+        primary_key=True,
+        default=gen_uuid
+    )
+
+    payment_id = Column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("payments.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True
+    )
+
+    provider = Column(
+        String(30),
+        nullable=False
+    )
+
+    event_type = Column(
+        String(50),
+        nullable=False
+    )
+    # settlement | pending | expire | refund | cancel
+
+    payload = Column(
+        JSONB,
+        nullable=False
+    )
+
+    signature_valid = Column(
+        Boolean,
+        default=False
+    )
+
+    received_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    payment = relationship(
+        "Payment",
+        back_populates="events"
+    )
+
+    
 class AnalyticsLog(Base):
     __tablename__ = "analytics_log"
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
@@ -203,6 +386,8 @@ class AnalyticsLog(Base):
     meta_data = Column(JSONB) # Jauh lebih baik untuk analytics
     duration_ms = Column(Integer)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
 
 DB_URL = env_config.get("DATABASE_URL")
 

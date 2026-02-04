@@ -5,15 +5,17 @@ from app.schemas.pricing_schema import PricingType
 from app.schemas.user_schema import CreateUserSchema
 from app.services.pricing_service import PricingService
 from app.services.role_service import RoleService
+from app.services.subscription_credit_service import SubscriptionCreditService
 from app.services.user_subscription_service import UserSubscriptionService
 
 
 class UserService:
-    def __init__(self, user_repository : UserRepository, role_service : RoleService,user_subscription_service: UserSubscriptionService,pricing_service : PricingService):
+    def __init__(self, user_repository : UserRepository, role_service : RoleService,user_subscription_service: UserSubscriptionService,pricing_service : PricingService, credit_service : SubscriptionCreditService):
         self._user_repository = user_repository
         self._role_service = role_service
         self._user_subscription_service = user_subscription_service
         self._pricing_service = pricing_service
+        self._credit_service = credit_service
         
     def create_user(self, payload : CreateUserSchema):
         try:
@@ -26,10 +28,11 @@ class UserService:
                 role_id=existing_role.id
             )
             free_pricing = self._pricing_service.find_by_name(PricingType.Free.value)
-            self._user_subscription_service.assign_subscription_to_user(
+            subscription = self._user_subscription_service.assign_subscription_to_user(
                 account_id=new_user.id,
                 pricing_id=free_pricing.id
             )
+            self._credit_service.create(subscription.id)
             self._user_repository._db.commit()
             self._user_repository._db.refresh(new_user)
             return new_user

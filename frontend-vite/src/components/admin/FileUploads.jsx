@@ -1,56 +1,29 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { FiUploadCloud, FiFileText, FiX, FiChevronsRight, FiBriefcase, FiType } from 'react-icons/fi';
 import { getJobByHr } from '../../integration/api';
+import useJobStore from '../../store/jobStore';
 const FileUploads = () => {
     // --- STATE MANAGEMENT ---
     const [activeTab, setActiveTab] = useState('profile'); // 'profile' atau 'criteria'
     const [showUploader, setShowUploader] = useState(false);
-
+    const { data,findAll,loading } = useJobStore()
     // State untuk Tab "Profil Jabatan"
     const [jobs, setJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState('');
     const [isLoadingJobs, setIsLoadingJobs] = useState(true);
     const [jobError, setJobError] = useState(null);
     const [error, setError] = useState(null)
-    // State untuk Tab "Kriteria Langsung"
     const [criteriaText, setCriteriaText] = useState('');
 
-    // State untuk Upload File
     const [files, setFiles] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // --- DATA FETCHING ---
     useEffect(() => {
-        // Hanya fetch jobs jika tab 'profile' aktif
         if (activeTab === 'profile') {
-            const fetchJobs = async () => {
-                setIsLoadingJobs(true);
-                try {
-                    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulasi API call
-                
-                    const dummyJobs = await getJobByHr();
-                   
-
-                    // handle both single object and array response
-                    if (Array.isArray(dummyJobs.result)) {
-                        setJobs(dummyJobs.result);
-                    } else if (dummyJobs && typeof dummyJobs === "object") {
-                        setJobs([dummyJobs.result]);
-                    } else {
-                        setJobs([]);
-                    }
-                    setError(null);
-                } catch (err) {
-                   
-                    setJobError('Gagal memuat profil pekerjaan.');
-                } finally {
-                    setIsLoadingJobs(false);
-                }
-            };
-            fetchJobs();
+            findAll()
         }
-    }, [activeTab]);
+    }, [activeTab,findAll]);
 
     // --- HANDLER & LOGIC ---
     const resetState = () => {
@@ -104,17 +77,12 @@ const FileUploads = () => {
             formData.append('files', file);
         });
 
-        console.log(`Mengirim ${files.length} file...`);
-        console.log("Payload yang akan dikirim:", Object.fromEntries(formData));
-
         // SIMULASI PROSES UPLOAD
         await new Promise(resolve => setTimeout(resolve, 100));
         alert(`PROSES SELESAI (Simulasi): ${files.length} CV telah dianalisis. Lihat hasil di console.`);
-
         setIsProcessing(false);
     };
 
-    // Handler utilitas lainnya (drag/drop, format size, dll.)
     const handleFiles = (newFiles) => setFiles(prev => [...prev, ...Array.from(newFiles)]);
     const handleDragOver = useCallback((e) => { e.preventDefault(); setIsDragging(true); }, []);
     const handleDragLeave = useCallback((e) => { e.preventDefault(); setIsDragging(false); }, []);
@@ -152,10 +120,10 @@ const FileUploads = () => {
                     {activeTab === 'profile' && (
                         <div>
                             <label htmlFor="job-select" className="block text-slate-300 mb-2 font-medium">Pilih profil jabatan yang sudah tersimpan:</label>
-                            {isLoadingJobs ? <p>Memuat profil...</p> : jobError ? <p className="text-red-400">{jobError}</p> : (
+                            {loading ? <p>Memuat profil...</p> : jobError ? <p className="text-red-400">{jobError}</p> : (
                                 <select id="job-select" value={selectedJobId} onChange={(e) => handleJobSelect(e.target.value)} className="w-full md:w-2/3 bg-slate-900 border border-slate-600 rounded-lg p-3 focus:ring-2 focus:ring-indigo-500">
                                     <option value="" disabled>-- Pilih Posisi --</option>
-                                    {jobs.length > 0 ? (jobs.map(job => <option key={job.id} value={job.id}>{job.title}</option>)) : (
+                                    {data.length > 0 ? (data.map(job => <option key={job.id} value={job.id}>{job.title}</option>)) : (
                                         <option disabled={true}>Tidak tersedia</option>
                                     )}
                                 </select>
