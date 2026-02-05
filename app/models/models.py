@@ -215,7 +215,11 @@ class UserSubscription(Base):
     deleted_at = Column(DateTime(timezone=True), nullable=True)
     accounts = relationship("Accounts", back_populates="subscriptions")
     pricing = relationship("Pricing", back_populates="subscriptions")
-    payments = relationship("UserSubscription", back_populates="payments", cascade="all, delete-orphan")
+    payments = relationship(
+        "Payment",
+        back_populates="subscription",
+        cascade="all, delete-orphan"
+    )
     credits = relationship(
         "SubscriptionCredit",
         back_populates="subscription",
@@ -283,6 +287,7 @@ class Payment(Base):
         index=True
     )
 
+    
     provider = Column(
         String(30),
         nullable=False

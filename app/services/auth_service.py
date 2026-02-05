@@ -19,7 +19,8 @@ class AuthService:
         payload_jwt = {
             "id": str(existing_account.id),
             "email": existing_account.email,
-            "role": str(existing_account.account_roles.role.name)
+            "role": str(existing_account.account_roles.role.name),
+            "tier":str(existing_account.subscriptions.pricing.name),
         }
         jwt_token = generate_token(payload=payload_jwt)
         return {

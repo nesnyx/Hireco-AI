@@ -15,4 +15,6 @@ class SubscriptionCreditRepository:
         self._db_session.add(credit)
         self._db_session.flush()
         return credit
-        
+    
+    
+    
