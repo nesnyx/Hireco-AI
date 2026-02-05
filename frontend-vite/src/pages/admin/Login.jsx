@@ -30,7 +30,7 @@ const LoginPage = () => {
                 await useAuthStore.getState().checkAuth();
                 navigate("/admin/dashboard");
             } else {
-                await authentication.register(payload.fullName, payload.email, payload.password);
+                await authentication.register(payload.email, payload.password,payload.fullName);
                 alert("Registration successful! Please log in.");
                 setIsRegister(false);
             }

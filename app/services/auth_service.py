@@ -16,11 +16,16 @@ class AuthService:
         existing_account = self._user_service.find_by_email(payload.email)
         if payload.password != existing_account.password:
             raise UserPasswordMismatch()
+        pricing_name = (
+            existing_account.subscriptions[0].pricing.name
+            if existing_account.subscriptions
+            else None
+        )
         payload_jwt = {
             "id": str(existing_account.id),
             "email": existing_account.email,
             "role": str(existing_account.account_roles.role.name),
-            "tier":str(existing_account.subscriptions.pricing.name),
+            "tier" : str(pricing_name) 
         }
         jwt_token = generate_token(payload=payload_jwt)
         return {
@@ -36,18 +41,11 @@ class AuthService:
         user = self._user_service.find_by_id(payload.get("id"))
         if not user:
             raise UserNotFound()
-        user_subscription = self._user_subscription_service.find_user_subscription(user.id)
-        pricing =  {
-            "id": user_subscription.pricing.id,
-            "name": user_subscription.pricing.name,
-            "price": user_subscription.pricing.name,
-            "max_jobs": user_subscription.pricing.max_jobs,
-        }
         data = {
             "id": user.id,
             "email": user.email,
-            "role": payload.role,
+            "role": payload['role'],
             "profile": user.profile,
-            "pricing":pricing
+            "pricing":payload['tier'],
         }
         return {"id": id, "data": data}

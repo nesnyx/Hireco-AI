@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 from app.core.env import env_config
 from requests import Session
 from app.helper.error_handling import InvalidCredentials
-from app.models.models import Accounts, get_db,  UserSubscription
+from app.models.models import Accounts, SubscriptionCredit, get_db,  UserSubscription
 
 
 SECRET_KEY = env_config.get("SECRET_KEY")
@@ -56,18 +56,13 @@ def get_current_user(
     if user is None:
         raise credentials_exception
     user_subscription =  db.query(UserSubscription).filter(UserSubscription.account_id == id).first()
-    
-    pricing =  {
-        "id": user_subscription.pricing.id,
-        "name": user_subscription.pricing.name,
-        "price": user_subscription.pricing.name,
-        "max_jobs": user_subscription.pricing.max_jobs,
-    }
+    credit = db.query(SubscriptionCredit).filter(SubscriptionCredit.subscription_id == user_subscription.id).first()
     data = {
         "id": user.id,
         "email": user.email,
         "role": payload["role"],
         "profile": json.loads(user.profile),
-        "pricing":pricing
+        "pricing":user_subscription.pricing.name,
+        "credit":credit.amount
     }
     return {"id": id, "data": data}

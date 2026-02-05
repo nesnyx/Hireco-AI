@@ -33,8 +33,6 @@ class Accounts(Base):
     oauth_id = Column(String(255), nullable=True)
     profile = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
-    # Relationships
     jobs = relationship("Job", back_populates="accounts", cascade="all, delete-orphan")
     feedbacks = relationship("UserFeedback", back_populates="accounts")
     subscriptions = relationship("UserSubscription", back_populates="accounts", cascade="all, delete-orphan")
@@ -47,7 +45,6 @@ class AccountRole(Base):
     account_id = Column(PG_UUID, ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, unique=True)
     role_id = Column(PG_UUID, ForeignKey("roles.id", ondelete="CASCADE"), nullable=False)
     assigned_at = Column(DateTime(timezone=True), server_default=func.now())
-    
     account = relationship("Accounts", back_populates="account_roles")
     role = relationship("Role", back_populates="account_roles")
 

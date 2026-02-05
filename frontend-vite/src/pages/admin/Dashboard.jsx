@@ -92,21 +92,21 @@ const DashboardPage = () => {
                     label: 'Analysis CV',
 
                   },
-                  {
-                    key: 'comparing',
-                    label: 'Comparing',
+                  // {
+                  //   key: 'comparing',
+                  //   label: 'Comparing',
 
-                  },
+                  // },
                   {
                     key: 'profile',
                     label: 'Profile',
 
                   },
-                  {
-                    key: 'exporting',
-                    label: 'Exporting',
+                  // {
+                  //   key: 'exporting',
+                  //   label: 'Exporting',
 
-                  },
+                  // },
                 ].map((item) => (
                   <li key={item.key}>
                     <button
@@ -124,7 +124,10 @@ const DashboardPage = () => {
               </ul>
             </nav>
             <div className='flex items-center justify-center mb-5'>
-              Pricing Plan : <div className='bg-green-700 px-1 '>{user?.pricing?.name}</div>
+              Pricing Plan : <div className='bg-green-700 px-1 '>{user?.pricing}</div>
+            </div>
+            <div className='flex items-center justify-center mb-5'>
+              Quota Credits : <div className='bg-blue-700 px-1 '>{user?.credit}</div>
             </div>
             <div className="p-4 border-t border-slate-700">
               <button

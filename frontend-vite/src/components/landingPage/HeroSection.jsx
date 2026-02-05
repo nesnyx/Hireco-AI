@@ -34,7 +34,7 @@ const HeroSection = () => {
                     <p className="text-xl text-slate-400 mb-12 max-w-2xl mx-auto fade-in-up" style={{ animationDelay: '0.4s' }}>
                         Revolutionize your hiring process with intelligent CV scoring,
                         automated candidate evaluation, and AI-driven insights that help
-                        you find the perfect match — faster, smarter, and ease to use.
+                        faster, smarter, and ease to use.
                     </p>
 
                     {/* CTA Buttons */}
