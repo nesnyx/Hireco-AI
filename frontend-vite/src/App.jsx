@@ -7,6 +7,7 @@ import ProtectedRoute from "../src/layout/ProtectedLayout/admin";
 import Home from "../src/pages/guest/Home";
 import LandingPage from "../src/pages/guest/LandingPage";
 import GuestLayout from "./layout/MainLayout/guestLayout";
+import VerifyAccount from "./pages/admin/VerifyAccount";
 
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/admin/login" element={<LoginPage />} />
         </Route>
+        <Route path="/verify" element={<VerifyAccount />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/admin/dashboard" element={<DashboardPage />} />
         </Route>

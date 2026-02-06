@@ -61,10 +61,19 @@ class AuthService:
     def verify(self,token):
         existing_token = self._registration_token_repo.find(token)
         if not existing_token:
-            raise RegistrationTokenNotFound()
+            return {
+            "success":False,
+            "msg":"not_found"
+        }
         if existing_token.expires_at <= datetime.now(timezone.utc):
             self._registration_token_repo.delete_by_token(token)
-            raise RegistrationTokenNotFound()
+            return {
+                "success":False,
+                "msg":"expired"
+            }
         self._user_service.update_status(existing_token.account_id)
         self._registration_token_repo.delete_by_token(token=token)
-        return True
+        return {
+            "success":True,
+            "msg":"usage"
+        }
