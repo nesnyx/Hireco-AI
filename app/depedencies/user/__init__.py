@@ -4,6 +4,7 @@ from app.depedencies.pricing import get_pricing_service
 from app.depedencies.role import get_role_service
 from app.depedencies.subscription import get_credit_service
 from app.models.models import get_db
+from app.repositories._registration_token_repository import RegistrationTokenRepository
 from app.repositories._user_repository import UserRepository
 from app.repositories._user_subscription_repository import UserSubscriptionRepository
 from app.services.auth_service import AuthService
@@ -27,5 +28,8 @@ def _get_user_service(repo :UserRepository = Depends(_get_user_repository),role_
     return UserService(repo, role_service,user_subscription_service,pricing_service,credit_service)
 
 
-def get_auth_service(service : UserService = Depends(_get_user_service),user_subscription_service : UserSubscriptionService = Depends(_get_user_subscription_service)) -> AuthService:
-    return AuthService(service,user_subscription_service)
+def _get_registration_token_repository(db : Session = Depends(get_db)):
+    return RegistrationTokenRepository(db)
+
+def get_auth_service(service : UserService = Depends(_get_user_service),user_subscription_service : UserSubscriptionService = Depends(_get_user_subscription_service),registration_token_repository : RegistrationTokenRepository = Depends(_get_registration_token_repository)) -> AuthService:
+    return AuthService(service,user_subscription_service,registration_token_repository)

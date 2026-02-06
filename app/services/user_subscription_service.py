@@ -19,3 +19,4 @@ class UserSubscriptionService:
         if not existing_subscription:
             raise UserNotFound()
         return existing_subscription
+    

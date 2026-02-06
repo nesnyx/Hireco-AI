@@ -22,3 +22,5 @@ class InvalidCredentials(Exception):
 class JobNotFound(Exception):
     pass
 
+class RegistrationTokenNotFound(Exception):
+    pass

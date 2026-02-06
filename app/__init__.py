@@ -7,9 +7,9 @@ from app.api.routes.pricing import pricing_router
 from app.api.routes.role import role_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.helper.api_response import ResponseWrapperMiddleware
-from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
+from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RegistrationTokenNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
 from app.core.env import env_config
-from app.subscribers import analysis_subscriber
+from app.subscribers import analysis_subscriber,email_subscriber
 origins = [env_config.get("ORIGINS")]
 app = FastAPI(title="Hireco", version="0.1.0")
 app.add_middleware(ResponseWrapperMiddleware)
@@ -75,4 +75,13 @@ async def invalid_credentials(request: Request, exc):
         status_code=status.HTTP_401_UNAUTHORIZED,
         content={"detail": "Could not validate credentials"},
         headers={"WWW-Authenticate": "Bearer"},
+    )
+    
+        
+@app.exception_handler(RegistrationTokenNotFound)
+async def registration_token_expired(request: Request, exc):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": "Invalid URL or Expired"},
+
     )

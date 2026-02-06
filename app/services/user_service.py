@@ -51,3 +51,6 @@ class UserService:
         if not existing_user:
             raise UserNotFound()
         return existing_user
+    
+    def update_status(self,account_id : str):
+        return self._user_repository.update_status(account_id)

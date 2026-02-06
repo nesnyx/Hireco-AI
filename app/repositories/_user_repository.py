@@ -1,6 +1,7 @@
 import json
 from sqlalchemy.orm import Session
 
+from app.helper.error_handling import UserNotFound
 from app.models.models import Accounts
 from app.schemas.user_schema import CreateUserSchema
 
@@ -32,3 +33,11 @@ class UserRepository:
     def get_by_id(self, id : str):
         return self._db.query(Accounts).filter(Accounts.id == id).first()
     
+    def update_status(self, id: str):
+        existing_user = self._db.query(Accounts).filter(Accounts.id == id).first()
+        if not existing_user:
+            raise UserNotFound()
+        existing_user.is_verify = True
+        self._db.commit()
+        self._db.refresh(existing_user)
+        return existing_user

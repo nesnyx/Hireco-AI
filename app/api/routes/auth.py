@@ -33,8 +33,6 @@ async def me(current_user=Depends(get_current_user)):
 
 
 
-
-
-@auth_router.get("/logout")
-async def logout():
-    pass
+@auth_router.get("/verify")
+async def verify(token : str, service: AuthService = Depends(get_auth_service)):
+    return service.verify(token)

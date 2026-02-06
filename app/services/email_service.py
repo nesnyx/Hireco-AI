@@ -1,6 +1,6 @@
 from fastapi_mail import FastMail,MessageSchema,ConnectionConfig, MessageType
 from app.core.env import env_config
-import secrets
+
 
 conf = ConnectionConfig(
     MAIL_USERNAME=env_config["GMAIL_APP_EMAIL"],
@@ -11,18 +11,14 @@ conf = ConnectionConfig(
     MAIL_STARTTLS=True,
     MAIL_SSL_TLS=False,
     USE_CREDENTIALS=True,
-    TEMPLATE_FOLDER="../templates"
 )
 
-async def send_registration_mail(email: str,username :str , token : str):
+async def send_registration_mail(email: str, token : str):
     verify_url = env_config['VERIFY_URL']+token
     message = MessageSchema(
         subject="Verifikasi Akun Kamu",
         recipients=[email],
-        template_body={
-            "username": username,
-            "token_url": verify_url
-        },
+       body=f"Link verification {verify_url}",
         subtype=MessageType.html
     )
     fm = FastMail(conf)
