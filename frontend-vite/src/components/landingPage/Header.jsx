@@ -41,8 +41,7 @@ const Header = () => {
                     {/* Desktop CTA */}
                     <div className="hidden md:flex items-center space-x-4">
                         <Button to="/admin/login" variant="ghost">Login</Button>
-                        {/* <Button to="/user/login" variant="ghost">Login be Job Seeker</Button> */}
-                        <Button variant="primary">Get Started</Button>
+                        <Button href={"/admin/login"} variant="primary">Get Started</Button>
                     </div>
 
                     {/* Mobile menu button */}
@@ -69,10 +68,8 @@ const Header = () => {
                                 </a>
                             ))}
                             <div className="pt-4 border-t border-slate-800 flex flex-col space-y-2">
-                                <Button to="/admin/login" variant="ghost">Login be HR</Button>
-                                <Button to="/user/login" variant="ghost">Login be Job Seeker</Button>
-
-                                <Button variant="primary" className="w-full">Get Started</Button>
+                                <Button to="/admin/login" variant="ghost">Login</Button>
+                                <Button href={"/admin/login"} variant="primary" className="w-full">Get Started</Button>
                             </div>
                         </nav>
                     </div>

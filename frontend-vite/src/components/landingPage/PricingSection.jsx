@@ -10,7 +10,7 @@ const PricingSection = () => {
       features: [
         'Max 10 CVs Screening',
         'Basic analytics',
-        'Comparing Candidates',
+       
         'Basic reporting'
       ]
     },

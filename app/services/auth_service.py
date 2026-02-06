@@ -6,6 +6,7 @@ from app.services.user_service import UserService
 from app.services.user_subscription_service import UserSubscriptionService
 from app.utils.jwt import generate_token, verify_token
 from app.utils.jwt import oauth2_scheme
+from app.core.events import ee, SEND_EMAIL
 
 class AuthService:
     def __init__(self, user_service : UserService,user_subscription_service : UserSubscriptionService):
@@ -32,9 +33,10 @@ class AuthService:
             "token": jwt_token,
         }
         
-    
     def register(self, payload : CreateUserSchema):
-        return self._user_service.create_user(payload=payload)
+        new_account = self._user_service.create_user(payload=payload)
+        ee.emit(SEND_EMAIL)
+        return 
     
     def get_current_user(self, token: str = Depends(oauth2_scheme)):
         payload = verify_token(token=token)

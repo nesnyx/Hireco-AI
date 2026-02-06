@@ -32,6 +32,7 @@ class Accounts(Base):
     provider = Column(String(50), default="email")
     oauth_id = Column(String(255), nullable=True)
     profile = Column(Text, nullable=True)
+    is_verify = Column(Boolean , default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     jobs = relationship("Job", back_populates="accounts", cascade="all, delete-orphan")
     feedbacks = relationship("UserFeedback", back_populates="accounts")
@@ -390,6 +391,13 @@ class AnalyticsLog(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
+
+class RegistrationToken(Base):
+    __tablename__ = "registration_token"
+    id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
+    token = Column(String(100), unique=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    expires_at = Column(DateTime(timezone=True))
 
 DB_URL = env_config.get("DATABASE_URL")
 
