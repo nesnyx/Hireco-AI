@@ -7,7 +7,7 @@ from app.api.routes.pricing import pricing_router
 from app.api.routes.role import role_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.helper.api_response import ResponseWrapperMiddleware
-from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RegistrationTokenNotFound, RoleNotFound, UserNotFound, UserPasswordMismatch
+from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RegistrationTokenNotFound, RoleNotFound, UserNotFound, UserNotVerify, UserPasswordMismatch
 from app.core.env import env_config
 from app.subscribers import analysis_subscriber,email_subscriber
 origins = [env_config.get("ORIGINS")]
@@ -65,7 +65,7 @@ async def user_not_found_handler(request: Request, exc):
 async def user_password_mismatch_handler(request: Request, exc):
         return JSONResponse(
         status_code=401,
-        content={"detail": "Invalid Credentials"},
+        content={"detail": "Your Password Wrong"},
         )
         
         
@@ -83,5 +83,13 @@ async def registration_token_expired(request: Request, exc):
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"detail": "Invalid URL or Expired"},
+
+    )
+    
+@app.exception_handler(UserNotVerify)
+async def user_not_verify(request: Request, exc):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": "Your Acoount Has not been Verify"},
 
     )

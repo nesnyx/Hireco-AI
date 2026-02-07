@@ -35,7 +35,7 @@ async def me(current_user=Depends(get_current_user)):
 
 
 @auth_router.get("/verify")
-async def verify(token : str, service: AuthService = Depends(get_auth_service)):
+async def verify(token : str = Query(...), service: AuthService = Depends(get_auth_service)):
     token_verify = service.verify(token)
     if token_verify["msg"] == "expired":
         return RedirectResponse(
@@ -49,3 +49,7 @@ async def verify(token : str, service: AuthService = Depends(get_auth_service)):
     return RedirectResponse(
         f"{FRONTEND_BASE_URL}/verify?status=success"
     )
+
+@auth_router.get("/resend-verification")
+async def resend_verification():
+    pass

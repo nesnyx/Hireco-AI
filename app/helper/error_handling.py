@@ -24,3 +24,6 @@ class JobNotFound(Exception):
 
 class RegistrationTokenNotFound(Exception):
     pass
+
+
+class UserNotVerify(Exception):pass

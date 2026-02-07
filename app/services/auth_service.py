@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from fastapi import Depends
-from app.helper.error_handling import RegistrationTokenNotFound, UserNotFound, UserPasswordMismatch
+from app.helper.error_handling import RegistrationTokenNotFound, UserNotFound, UserNotVerify, UserPasswordMismatch
 from app.repositories._registration_token_repository import RegistrationTokenRepository
 from app.schemas.auth_schema import LoginSchema
 from app.schemas.user_schema import CreateUserSchema
@@ -16,8 +16,11 @@ class AuthService:
         self._user_service = user_service
         self._user_subscription_service = user_subscription_service
         self._registration_token_repo = registration_token_repository
+        
     def login(self, payload : LoginSchema):
         existing_account = self._user_service.find_by_email(payload.email)
+        if existing_account.is_verify == False:
+            raise UserNotVerify()
         if payload.password != existing_account.password:
             raise UserPasswordMismatch()
         pricing_name = (
