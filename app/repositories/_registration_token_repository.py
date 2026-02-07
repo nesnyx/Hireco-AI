@@ -20,6 +20,10 @@ class RegistrationTokenRepository:
     def find(self, token:str):
         return self._db_session.query(RegistrationToken).filter(RegistrationToken.token == token).first()
     
+    def find_by_account_id(self, account_id):
+        return self._db_session.query(RegistrationToken).filter(RegistrationToken.account_id == account_id).first()
+    
+    
     def delete_by_token(self, token : str):
         token = self._db_session.query(RegistrationToken).filter(RegistrationToken.token == token).first()
         if not token:

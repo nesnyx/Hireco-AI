@@ -51,5 +51,13 @@ async def verify(token : str = Query(...), service: AuthService = Depends(get_au
     )
 
 @auth_router.get("/resend-verification")
-async def resend_verification():
-    pass
+async def resend_verification(email : str = Query(...), service: AuthService = Depends(get_auth_service)):
+    resend = service.resend_verification(email=email)
+    if resend["msg"] == "resend":
+        return RedirectResponse(
+            f"{FRONTEND_BASE_URL}/resend-verification?status=resend"
+        )
+    
+    return RedirectResponse(
+            f"{FRONTEND_BASE_URL}/resend-verification?status=invalid"
+    )

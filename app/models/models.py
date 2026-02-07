@@ -386,7 +386,7 @@ class AnalyticsLog(Base):
     __tablename__ = "analytics_log"
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
     event_type = Column(String(100), nullable=False, index=True)
-    meta_data = Column(JSONB) # Jauh lebih baik untuk analytics
+    meta_data = Column(JSONB)
     duration_ms = Column(Integer)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 

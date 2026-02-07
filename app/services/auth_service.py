@@ -80,3 +80,32 @@ class AuthService:
             "success":True,
             "msg":"usage"
         }
+        
+    def resend_verification(self,email : str):
+        secret_token = secrets.token_urlsafe(32)
+        existing_account_by_email = self._user_service.find_by_email(email)
+        if existing_account_by_email.is_verify == False:
+            existing_token = self._registration_token_repo.find_by_account_id(existing_account_by_email.id)
+            if not existing_token:
+                return {
+                "success":False,
+                "msg":"not_found"
+            }
+            if existing_token.expires_at <= datetime.now(timezone.utc):
+                self._registration_token_repo.delete_by_token(existing_token.token)
+                return {
+                    "success":False,
+                    "msg":"expired"
+                }
+            ee.emit(SEND_EMAIL,email,secret_token)
+            return {
+                "success":True,
+                "msg":"resend"
+            }
+            
+        return {
+            "success":True,
+            "msg":"verify"
+        }
+        
+        
