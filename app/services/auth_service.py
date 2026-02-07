@@ -81,31 +81,24 @@ class AuthService:
             "msg":"usage"
         }
         
-    def resend_verification(self,email : str):
+    def resend_verification(self,token_expired : str):
         secret_token = secrets.token_urlsafe(32)
-        existing_account_by_email = self._user_service.find_by_email(email)
-        if existing_account_by_email.is_verify == False:
-            existing_token = self._registration_token_repo.find_by_account_id(existing_account_by_email.id)
-            if not existing_token:
-                return {
-                "success":False,
-                "msg":"not_found"
-            }
-            if existing_token.expires_at <= datetime.now(timezone.utc):
-                self._registration_token_repo.delete_by_token(existing_token.token)
-                return {
-                    "success":False,
-                    "msg":"expired"
-                }
-            ee.emit(SEND_EMAIL,email,secret_token)
+        existing_token = self._registration_token_repo.find(token=token_expired)
+        if not existing_token:
+            raise RegistrationTokenNotFound()
+        existing_account = self._user_service.find_by_id(id=existing_token.account_id)
+        if existing_account.is_verify == True:
             return {
-                "success":True,
-                "msg":"resend"
+                "success":False,
+                "msg":"verify"
             }
-            
+        self._registration_token_repo.delete_by_token(token_expired)
+        ee.emit(SEND_EMAIL,existing_account.email,secret_token)
         return {
             "success":True,
-            "msg":"verify"
+            "msg":"resend"
         }
+        
+        
         
         

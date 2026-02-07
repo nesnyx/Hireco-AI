@@ -58,6 +58,12 @@ async def resend_verification(email : str = Query(...), service: AuthService = D
             f"{FRONTEND_BASE_URL}/resend-verification?status=resend"
         )
     
+    if resend["msg"] == "verify":
+        return RedirectResponse(
+            f"{FRONTEND_BASE_URL}/resend-verification?status=verify"
+        )
+    
+    
     return RedirectResponse(
             f"{FRONTEND_BASE_URL}/resend-verification?status=invalid"
     )
