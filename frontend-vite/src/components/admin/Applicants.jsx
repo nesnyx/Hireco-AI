@@ -20,8 +20,7 @@ export default function Applicant() {
     const filteredApplicants = useMemo(() => {
         if (!data) return [];
         return data.filter(app => 
-            app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            app.email.toLowerCase().includes(searchTerm.toLowerCase())
+            app.name
         );
     }, [data, searchTerm]);
 
@@ -96,6 +95,7 @@ export default function Applicant() {
                                 <th className="px-6 py-4 text-left">Contact</th>
                                 <th className="px-6 py-4 text-left">Score</th>
                                 <th className="px-6 py-4 text-left">Applied Date</th>
+                                <th className="px-6 py-4 text-left">Status</th>
                                 <th className="px-6 py-4 text-center">Actions</th>
                             </tr>
                         </thead>
@@ -123,6 +123,11 @@ export default function Applicant() {
                                         </td>
                                         <td className="px-6 py-4 text-slate-300">
                                             {DateTime.fromISO(reg.created_at).toFormat('MMM dd, yyyy')}
+                                        </td>
+                                        <td className="px-6 py-4 text-slate-300">
+                                            {reg.status === "COMPLETED" ? (
+                                                <p className="text-green-400">{reg.status}</p>
+                                            ): <p className="text-yellow-400">{reg.status}</p>}
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-center space-x-2">

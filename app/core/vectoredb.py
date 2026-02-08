@@ -8,7 +8,7 @@ import logging,asyncio
 
 vectorstore = Chroma(
     client=client, 
-    collection_name=collection.name, 
+    collection_name="hr_knowledge", 
     embedding_function=embedding_function
 )
 

@@ -63,7 +63,7 @@ class ApplicantService:
         )
         return result
     
-    async def analyze(self,job_id : str,file:UploadFile):
+    async def analyze(self,job_id : str,file:UploadFile,account_id:str):
         UPLOAD_DIR = Path("uploads")
         UPLOAD_DIR.mkdir(exist_ok=True)
         job = self._hr_service.find_by_id(id=job_id)           
@@ -83,10 +83,11 @@ class ApplicantService:
         paylaod = CreateApplicantSchema(
             job_id=job_id,
             filename=file.filename,
-            file_id= file_id
+            file_id= file_id,
+            account_id=account_id
         )
-        self._applicant_repository.save(payload=paylaod)
-        ee.emit(ANALYSIS_STARTED, event_payload, self._loader_pdf)
+        new_applicant = self._applicant_repository.save(payload=paylaod)
+        ee.emit(ANALYSIS_STARTED, event_payload, self._loader_pdf,new_applicant.id,account_id)
         return {
             "status": "processing",
             "file_id": file_id,

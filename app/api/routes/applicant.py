@@ -12,6 +12,7 @@ from pathlib import Path
 from app.depedencies.applicant import get_applicant_service
 from pydantic import BaseModel
 from app.services.applicant_service import ApplicantService
+from app.utils.jwt import get_current_user
 
 
 logger = logging.getLogger(__name__)
@@ -37,11 +38,12 @@ class ApplicantInput(BaseModel):
 @applicant_router.post("/upload")
 async def upload_cv(
     job_id: str = Form(...),
-    file: UploadFile = File(...),
-    service : ApplicantService = Depends(get_applicant_service)
+    files: UploadFile = File(...),
+    service : ApplicantService = Depends(get_applicant_service),
+    current_user=Depends(get_current_user)
 ):
     
-    return await service.analyze(job_id=job_id,file=file)
+    return await service.analyze(job_id=job_id,file=files,account_id=current_user["id"])
 
 
 

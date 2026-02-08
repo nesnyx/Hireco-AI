@@ -1,14 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { FiUploadCloud, FiFileText, FiX, FiChevronsRight, FiBriefcase, FiType } from 'react-icons/fi';
-import { getJobByHr } from '../../integration/api';
 import useJobStore from '../../store/jobStore';
+import { applicant } from '../../integration/applicant';
+import { useNavigate } from 'react-router-dom';
 const FileUploads = () => {
-    // --- STATE MANAGEMENT ---
-    const [activeTab, setActiveTab] = useState('profile'); // 'profile' atau 'criteria'
+    const [activeTab, setActiveTab] = useState('profile');
     const [showUploader, setShowUploader] = useState(false);
-    const { data,findAll,loading } = useJobStore()
-    // State untuk Tab "Profil Jabatan"
-    const [jobs, setJobs] = useState([]);
+    const { data, findAll, loading } = useJobStore()
+    const navigate = useNavigate()
     const [selectedJobId, setSelectedJobId] = useState('');
     const [isLoadingJobs, setIsLoadingJobs] = useState(true);
     const [jobError, setJobError] = useState(null);
@@ -23,9 +22,8 @@ const FileUploads = () => {
         if (activeTab === 'profile') {
             findAll()
         }
-    }, [activeTab,findAll]);
+    }, [activeTab, findAll]);
 
-    // --- HANDLER & LOGIC ---
     const resetState = () => {
         setFiles([]);
         setShowUploader(false);
@@ -45,7 +43,7 @@ const FileUploads = () => {
     };
 
     const handleCriteriaSubmit = () => {
-        if (criteriaText.trim().length > 10) { // Validasi sederhana
+        if (criteriaText.trim().length > 10) {
             setShowUploader(true);
         } else {
             alert("Harap isi kriteria dengan lebih detail.");
@@ -53,34 +51,48 @@ const FileUploads = () => {
     };
 
     const handleProcessBatch = async () => {
+        if (isProcessing) return;
+
         setIsProcessing(true);
-        const formData = new FormData();
 
-        // Logika cerdas untuk menentukan payload berdasarkan tab aktif
-        if (activeTab === 'profile') {
-            if (!selectedJobId) {
-                alert("Sesi tidak valid, harap pilih profil kembali.");
-                setIsProcessing(false);
-                return;
+        try {
+            const formData = new FormData();
+
+            if (activeTab === 'profile') {
+                if (!selectedJobId) {
+                    throw new Error("Sesi tidak valid, harap pilih profil kembali.");
+                }
+                formData.append('job_id', selectedJobId);
             }
-            formData.append('job_id', selectedJobId);
-        } else if (activeTab === 'criteria') {
-            if (criteriaText.trim().length <= 10) {
-                alert("Kriteria tidak valid.");
-                setIsProcessing(false);
-                return;
+
+            if (activeTab === 'criteria') {
+                if (criteriaText.trim().length <= 10) {
+                    throw new Error("Kriteria tidak valid.");
+                }
+                formData.append('criteria_text', criteriaText);
             }
-            formData.append('criteria_text', criteriaText);
+
+            if (!files.length) {
+                throw new Error("File CV belum dipilih.");
+            }
+
+            files.forEach(file => {
+                formData.append('files', file);
+            });
+
+            // 🔥 PROSES SEBENARNYA
+            const result = await applicant.analyze(formData);
+
+            console.log("Hasil analisis:", result);
+
+            alert(`✅ PROSES SELESAI: ${files.length} CV Sedang dianalisis.`);
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            alert(`❌ Gagal memproses CV: ${error.message}`);
+        } finally {
+            setIsProcessing(false);
         }
-
-        files.forEach(file => {
-            formData.append('files', file);
-        });
-
-        // SIMULASI PROSES UPLOAD
-        await new Promise(resolve => setTimeout(resolve, 100));
-        alert(`PROSES SELESAI (Simulasi): ${files.length} CV telah dianalisis. Lihat hasil di console.`);
-        setIsProcessing(false);
     };
 
     const handleFiles = (newFiles) => setFiles(prev => [...prev, ...Array.from(newFiles)]);
@@ -146,14 +158,25 @@ const FileUploads = () => {
             {showUploader && (
                 <div className="mt-10 animate-fade-in">
                     <h2 className="text-xl font-semibold mb-4">Langkah 2: Upload CV Pelamar</h2>
-                    <div className={`p-10 border-2 border-dashed rounded-xl text-center transition-colors ${isDragging ? 'border-indigo-500 bg-indigo-900/20' : 'border-slate-600 hover:border-slate-500'}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
-                        <input type="file" id="fileUpload" multiple className="hidden" onChange={handleFileSelect} accept=".pdf,.doc,.docx" />
-                        <label htmlFor="fileUpload" className="cursor-pointer flex flex-col items-center">
-                            <FiUploadCloud className="text-5xl text-slate-400" />
-                            <p className="mt-4 text-lg font-semibold"><span className="text-indigo-400">Klik untuk upload</span> atau tarik dan lepas file</p>
-                            <p className="text-sm text-slate-500 mt-1">Mendukung format: PDF, DOC, DOCX</p>
-                        </label>
-                    </div>
+                    {files.length < 1 ? (
+                        <div className={`p-10 border-2 border-dashed rounded-xl text-center transition-colors ${isDragging ? 'border-indigo-500 bg-indigo-900/20' : 'border-slate-600 hover:border-slate-500'}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+                            <input type="file" id="fileUpload" multiple className="hidden" onChange={handleFileSelect} accept=".pdf,.doc,.docx" />
+                            <label htmlFor="fileUpload" className="cursor-pointer flex flex-col items-center">
+                                <FiUploadCloud className="text-5xl text-slate-400" />
+                                <p className="mt-4 text-lg font-semibold"><span className="text-indigo-400">Klik untuk upload</span> atau tarik dan lepas file</p>
+                                <p className="text-sm text-slate-500 mt-1">Mendukung format: PDF, DOC, DOCX</p>
+                            </label>
+                        </div>
+                    ) : (
+                        <div className={`p-10 border-2 border-dashed rounded-xl text-center transition-colors ${isDragging ? 'border-indigo-500 bg-indigo-900/20' : 'border-slate-600 hover:border-slate-500'}`} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+                            <input disabled={true} type="file" id="fileUpload" multiple className="hidden" onChange={handleFileSelect} accept=".pdf,.doc,.docx" />
+                            <label htmlFor="fileUpload" className="cursor-pointer flex flex-col items-center">
+                                <FiUploadCloud className="text-5xl text-slate-400" />
+                                <p className="mt-4 text-lg font-semibold"><span className="text-indigo-400">Maksimal 1 CV</span> tidak bisa upload lagi</p>
+
+                            </label>
+                        </div>
+                    )}
 
                     {files.length > 0 && (
                         <div className="mt-8 animate-fade-in">

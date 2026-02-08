@@ -5,9 +5,6 @@ const BASE_URL = "https://api-hireco.nadinata.org";
 
 export const api = axios.create({
     baseURL: BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
 });
 
 api.interceptors.request.use(
@@ -16,6 +13,7 @@ api.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        
         return config;
     },
     (error) => {
@@ -62,7 +60,7 @@ export async function loginHandler({ email, password }) {
 
 export async function registerHandler({ email, password, fullName }) {
     try {
-        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName});
+        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName });
         return {
             msg: "success",
             status: true,
@@ -79,7 +77,7 @@ export async function registerHandler({ email, password, fullName }) {
 
 export async function registerAdminHandler({ email, password, fullName }) {
     try {
-        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName});
+        await axios.post(`${BASE_URL}/auth/register`, { email: email, password: password, full_name: fullName });
         return {
             msg: "success",
             status: true,

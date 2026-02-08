@@ -9,7 +9,7 @@ class CreateApplicantSchema(BaseModel):
     filename: Optional[str] = None
     score: Optional[float] = None
     job_id: Optional[str] = None
-
+    account_id:str
     explanation: Optional[Any] = None
     hard_skill: Optional[Any] = None
     experience: Optional[Any] = None

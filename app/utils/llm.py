@@ -5,8 +5,8 @@ from app.core.env import env_config
 API_KEY = env_config.get("GEMINI_API_KEY")
 llm = ChatGoogleGenerativeAI(api_key=API_KEY, model="gemini-2.0-flash", temperature=0.1)
 
-EMBEDDING_MODEL = "models/embedding-001"
+EMBEDDING_MODEL = "models/gemini-embedding-001"
 
 embedding_function = GoogleGenerativeAIEmbeddings(
-    model="models/text-embedding-004", google_api_key=API_KEY
+    model=EMBEDDING_MODEL, google_api_key=API_KEY
 )

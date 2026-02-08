@@ -26,6 +26,7 @@ class ApplicantRepository:
             score = payload.score,
             job_id = payload.job_id,
             explanation = payload.explanation,
+            account_id=payload.account_id,
             hard_skill = payload.hard_skill,
             experience = payload.experience,
             presentation_quality = payload.presentation_quality,

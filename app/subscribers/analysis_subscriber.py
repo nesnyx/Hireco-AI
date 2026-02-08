@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @ee.on(ANALYSIS_STARTED)
-async def handle_pdf_analysis(payload: dict, loader_pdf_func):
+async def handle_pdf_analysis(payload: dict, loader_pdf_func,applicant_id,account_id):
     logger.info(f"🚀 Memulai processing untuk file_id: {payload['file_id']}")
     file_id = payload["file_id"]
     file_path = payload["file_path"]
@@ -48,8 +48,10 @@ async def handle_pdf_analysis(payload: dict, loader_pdf_func):
             presentation_quality=result["presentation_quality"],
             hard_skill=result["hard_skill"],
             job_id=job_id,
+            account_id=account_id
         )
         applicant_repository.update(file_id,payload,"COMPLETED")
         logging.info(f"✅ Selesai processing untuk file_id: {file_id}")
     except Exception as e:
         logging.error(f"❌ Gagal processing untuk file_id: {file_id}. Error: {str(e)}")
+        applicant_repository.delete(id=applicant_id)

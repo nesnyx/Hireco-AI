@@ -9,7 +9,7 @@ import useAuthStore from '../../store/authStore';
 import CustomAlert from '../../components/landingPage/UI/Alert';
 import { useNavigate } from 'react-router-dom';
 const DashboardPage = () => {
-  const [activePage, setActivePage] = useState('dashboard'); // Default page
+  const [activePage, setActivePage] = useState('applicant'); // Default page
   const [alertConfig, setAlertConfig] = useState({
     show: false,
     type: 'info',
