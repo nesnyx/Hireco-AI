@@ -41,10 +41,7 @@ class UserService:
             raise e
 
     def find_by_email(self, email :str):
-        existing_user = self._user_repository.get_by_email(email)
-        if not existing_user:
-            raise UserNotFound()
-        return existing_user
+        return self._user_repository.get_by_email(email)
     
     def find_by_id(self, id : str):
         existing_user = self._user_repository.get_by_id(id)

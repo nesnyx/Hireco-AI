@@ -6,11 +6,21 @@ import Profile from '../../components/admin/Profile';
 import FileUploads from '../../components/admin/FileUploads';
 import ComparingPage from '../../components/admin/Comparing';
 import useAuthStore from '../../store/authStore';
-
+import CustomAlert from '../../components/landingPage/UI/Alert';
+import { useNavigate } from 'react-router-dom';
 const DashboardPage = () => {
-  const [activePage, setActivePage] = useState('applicant'); // Default page
-
+  const [activePage, setActivePage] = useState('dashboard'); // Default page
+  const [alertConfig, setAlertConfig] = useState({
+    show: false,
+    type: 'info',
+    title: '',
+    message: ''
+  });
+  const showAlert = (type, title, message) => {
+    setAlertConfig({ show: true, type, title, message });
+  };
   const { user } = useAuthStore()
+  const navigate = useNavigate()
   const renderContent = () => {
     switch (activePage) {
       case 'dashboard':
@@ -40,6 +50,12 @@ const DashboardPage = () => {
 
   return (
     <div className="min-h-screen w-full bg-slate-950 flex">
+      {alertConfig.show && (
+        <CustomAlert
+          {...alertConfig}
+          onClose={() => setAlertConfig(prev => ({ ...prev, show: false }))}
+        />
+      )}
       {/* Container dengan tema dark */}
       <div className="w-full flex flex-col bg-slate-900 shadow-xl">
         {/* Header */}
@@ -132,9 +148,9 @@ const DashboardPage = () => {
             <div className="p-4 border-t border-slate-700">
               <button
                 onClick={() => {
-                  alert('Logged out!')
+                  showAlert('success',"Logout", "Logout successful")
                   localStorage.removeItem('token')
-                  window.location.href = '/admin/login'
+                  navigate("/admin/login")
                 }}
                 className="flex items-center px-4 py-3 text-red-400 hover:bg-red-900/20 hover:text-red-300 rounded-xl transition-all duration-200 w-full text-left cursor-pointer"
               >

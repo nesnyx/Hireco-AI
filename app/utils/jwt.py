@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 
 from fastapi.security import OAuth2PasswordBearer
 from app.core.env import env_config
-from requests import Session
+from sqlalchemy.orm import Session, joinedload
 from app.helper.error_handling import InvalidCredentials
 from app.models.models import Accounts, SubscriptionCredit, get_db,  UserSubscription
 
@@ -37,7 +37,7 @@ def verify_token(token: str):
 
 
 def get_current_user(
-    token: str = Depends(oauth2_scheme),db: Session = Depends(get_db)
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -47,22 +47,43 @@ def get_current_user(
     
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        id: str = payload.get("id")
-        if id is None:
+        user_id: str = payload.get("id") # ganti nama var 'id' agar tidak bentrok dengan built-in python
+        if user_id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = db.query(Accounts).filter(Accounts.id == id).first()
+
+    # 1. Ambil User
+    user = db.query(Accounts).filter(Accounts.id == user_id).first()
     if user is None:
         raise credentials_exception
-    user_subscription =  db.query(UserSubscription).filter(UserSubscription.account_id == id).first()
-    credit = db.query(SubscriptionCredit).filter(SubscriptionCredit.subscription_id == user_subscription.id).first()
+
+    # 2. Ambil Subscription SEKALIGUS dengan data Pricing (Eager Loading)
+    # Gunakan joinedload agar data pricing langsung nempel di memori
+    user_subscription = (
+        db.query(UserSubscription)
+        .options(joinedload(UserSubscription.pricing)) 
+        .filter(UserSubscription.account_id == user_id)
+        .first()
+    )
+
+    # Antisipasi jika user belum punya subscription
+    pricing_name = user_subscription.pricing.name if user_subscription and user_subscription.pricing else "Free"
+    sub_id = user_subscription.id if user_subscription else None
+
+    # 3. Ambil Credit
+    credit_amount = 0
+    if sub_id:
+        credit = db.query(SubscriptionCredit).filter(SubscriptionCredit.subscription_id == sub_id).first()
+        credit_amount = credit.amount if credit else 0
+
     data = {
         "id": user.id,
         "email": user.email,
-        "role": payload["role"],
-        "profile": json.loads(user.profile),
-        "pricing":user_subscription.pricing.name,
-        "credit":credit.amount
+        "role": payload.get("role"),
+        "profile": json.loads(user.profile) if user.profile else {},
+        "pricing": pricing_name,
+        "credit": credit_amount
     }
-    return {"id": id, "data": data}
+    
+    return {"id": user_id, "data": data}

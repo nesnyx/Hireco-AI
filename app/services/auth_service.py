@@ -40,11 +40,28 @@ class AuthService:
         }
         
     def register(self, payload : CreateUserSchema):
-        new_account = self._user_service.create_user(payload=payload)
         secret_token = secrets.token_urlsafe(32)
+        existing_user = self._user_service.find_by_email(email=payload.email)
+        if existing_user and existing_user.is_verify == False:
+            existing_token = self._registration_token_repo.find_by_account_id(existing_user.id)
+            if not existing_token:
+                self._registration_token_repo.create(token=secret_token,account_id=existing_user.id)
+                ee.emit(SEND_EMAIL,existing_user.email,secret_token)
+                return {
+                    "detail":"existing"
+                }
+            self._registration_token_repo.delete_by_token(token=existing_token.token)
+            self._registration_token_repo.create(token=secret_token,account_id=existing_user.id)
+            ee.emit(SEND_EMAIL,existing_user.email,secret_token)
+            return {
+                "detail":"existing"
+            }
+        new_account = self._user_service.create_user(payload=payload)
         self._registration_token_repo.create(token=secret_token,account_id=new_account.id)
         ee.emit(SEND_EMAIL,new_account.email,secret_token)
-        return new_account
+        return {
+                "detail":"new"
+            }
     
     def get_current_user(self, token: str = Depends(oauth2_scheme)):
         payload = verify_token(token=token)

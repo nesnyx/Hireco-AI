@@ -10,13 +10,16 @@ from app.schemas.user_schema import CreateUserSchema
 from app.services.auth_service import AuthService
 from app.utils.jwt import  get_current_user
 import logging
-
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
 auth_router = APIRouter(prefix="/auth")
 FRONTEND_BASE_URL = "https://hireco.nadinata.org"
 
+
+class VerifyBody(BaseModel):
+    token : str
 
 @auth_router.post("/login")
 async def login(payload: LoginSchema, service: AuthService = Depends(get_auth_service)):
@@ -35,11 +38,11 @@ async def me(current_user=Depends(get_current_user)):
 
 
 @auth_router.post("/verify")
-async def verify(token : str = Body(...), service: AuthService = Depends(get_auth_service)):
-    token_verify = service.verify(token)
+async def verify(payload : VerifyBody, service: AuthService = Depends(get_auth_service)):
+    token_verify = service.verify(payload.token)
     return token_verify
 
 @auth_router.post("/resend-verification")
-async def resend_verification(token : str = Body(...), service: AuthService = Depends(get_auth_service)):
-    resend = service.resend_verification(token)
+async def resend_verification(payload : VerifyBody, service: AuthService = Depends(get_auth_service)):
+    resend = service.resend_verification(payload.token)
     return resend

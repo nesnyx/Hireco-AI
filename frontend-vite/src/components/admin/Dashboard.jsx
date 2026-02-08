@@ -59,7 +59,7 @@ export default function Dashboard() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Total Jobs */}
                 <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:bg-slate-750 transition-colors">
                     <div className="flex items-center justify-between">
@@ -77,7 +77,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Total Applicants */}
-                <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:bg-slate-750 transition-colors">
+                {/* <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:bg-slate-750 transition-colors">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-sm text-slate-400 font-medium">Total Applicants</p>
@@ -92,7 +92,7 @@ export default function Dashboard() {
                     <div className="mt-4 flex items-center">
                         <span className="text-blue-400 text-sm font-medium">All time</span>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Average Score */}
                 <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:bg-slate-750 transition-colors">

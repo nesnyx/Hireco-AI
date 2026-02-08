@@ -18,8 +18,8 @@ async def send_registration_mail(email: str, token : str):
     message = MessageSchema(
         subject="Verifikasi Akun Kamu",
         recipients=[email],
-       body=f"Link verification {verify_url}",
+        body=f"Link verification {verify_url}",
         subtype=MessageType.html
     )
     fm = FastMail(conf)
-    await fm.send_message(message, template_name="registration_email.html")
+    await fm.send_message(message)

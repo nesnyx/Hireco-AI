@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { authentication } from "../../integration/auth";
 import useAuthStore from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
+import CustomAlert from "../../components/landingPage/UI/Alert";
+
+
 
 const LoginPage = () => {
     const [isRegister, setIsRegister] = useState(false);
@@ -11,37 +14,57 @@ const LoginPage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [fullName, setName] = useState('');
     const navigate = useNavigate();
+
+    // State untuk Custom Alert
+    const [alertConfig, setAlertConfig] = useState({ 
+        show: false, 
+        type: 'info', 
+        title: '', 
+        message: '' 
+    });
+
+    const showAlert = (type, title, message) => {
+        setAlertConfig({ show: true, type, title, message });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         try {
             if (isRegister && password !== confirmPassword) {
-                alert("Passwords do not match");
+                showAlert('error', 'Validation Error', 'Passwords do not match!');
                 setIsLoading(false);
                 return;
             }
+
             const payload = isRegister
                 ? { fullName, email, password }
                 : { email, password };
+
             if (!isRegister) {
                 const response = await authentication.login(payload.email, payload.password);
-                const token = response.data.data.token
+                const token = response.data.data.token;
                 localStorage.setItem("token", token);
                 await useAuthStore.getState().checkAuth();
                 navigate("/admin/dashboard");
             } else {
-                await authentication.register(payload.email, payload.password,payload.fullName);
-                alert("Registration successful! Please log in.");
-                setIsRegister(false);
-            }
 
+                const res = await authentication.register(payload.email, payload.password, payload.fullName);
+                if (res.data.data.detail === "new") {
+                    showAlert('success', 'Registration Success', 'Please check your email for verification.');
+                    setIsRegister(false);
+                    resetForm();
+                } else if (res.data.data.detail === "existing") {
+                    showAlert('warning', 'Existing Account', 'Account already exists. Please verify your email.');
+                    setIsRegister(false);
+                }
+            }
         } catch (error) {
             console.error(error);
-            alert(isRegister ? "Registration failed. Please try again." : "Login failed. Please try again.");
+            showAlert('error', 'Authentication Failed', isRegister ? "Registration failed. Try again." : "Login failed. Check your credentials.");
         } finally {
             setIsLoading(false);
         }
-
     };
 
     const resetForm = () => {
@@ -57,19 +80,28 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full">
-                {/* Gradient Border Effect */}
+        <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+            
+            {/* RENDER CUSTOM ALERT */}
+            {alertConfig.show && (
+                <CustomAlert 
+                    {...alertConfig}
+                    onClose={() => setAlertConfig(prev => ({ ...prev, show: false }))}
+                />
+            )}
+
+            <div className="max-w-md w-full relative z-10">
                 <div className="gradient-border glow-effect">
-                    <div className="gradient-border-content p-0">
+                    <div className="gradient-border-content p-0 text-white">
                         <div className="bg-slate-900 rounded-2xl overflow-hidden">
                             <div className="p-8 sm:p-10">
                                 <div className="text-center mb-8">
                                     <h1 className="text-3xl font-bold text-gradient mb-2">Hireco</h1>
-                                    <p className="text-sm text-slate-400">Sign in to your account</p>
+                                    <p className="text-sm text-slate-400">
+                                        {isRegister ? 'Create your new account' : 'Sign in to your account'}
+                                    </p>
                                 </div>
 
-                                {/* FORM */}
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     {isRegister && (
                                         <div className="fade-in-up">
@@ -79,7 +111,6 @@ const LoginPage = () => {
                                             <div className="relative">
                                                 <input
                                                     id="name"
-                                                    name="full_name"
                                                     type="text"
                                                     value={fullName}
                                                     onChange={(e) => setName(e.target.value)}
@@ -95,7 +126,7 @@ const LoginPage = () => {
                                             </div>
                                         </div>
                                     )}
-                                    {/* Email Field */}
+
                                     <div>
                                         <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
                                             Email
@@ -111,7 +142,6 @@ const LoginPage = () => {
                                         />
                                     </div>
 
-                                    {/* Password Field */}
                                     <div>
                                         <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
                                             Password
@@ -126,8 +156,6 @@ const LoginPage = () => {
                                             placeholder="••••••••"
                                         />
                                     </div>
-
-                                    {/* Submit Button */}
 
                                     {isRegister && (
                                         <div className="fade-in-up">
@@ -162,11 +190,7 @@ const LoginPage = () => {
                                             <span className="flex items-center justify-center">
                                                 <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                    <path
-                                                        className="opacity-75"
-                                                        fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                                    ></path>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                                 </svg>
                                                 {isRegister ? 'Creating account...' : 'Signing in...'}
                                             </span>
@@ -179,19 +203,10 @@ const LoginPage = () => {
                                             </>
                                         )}
                                     </button>
-                                    <div className="relative">
-                                        <div className="absolute inset-0 flex items-center">
-                                            <div className="w-full border-t border-slate-700"></div>
-                                        </div>
-                                        <div className="relative flex justify-center text-sm">
-                                            <span className="px-2 bg-slate-900 text-slate-400">Or continue with</span>
-                                        </div>
-                                    </div>
                                 </form>
                                 <div className="mt-6 text-center">
-                                    <a href="/" className="text-sm text-slate-400 justify-center">Back Home</a>
+                                    <a href="/" className="text-sm text-slate-400 hover:text-white transition-colors">Back Home</a>
                                 </div>
-                                {/* END FORM */}
                             </div>
                             <div className="bg-slate-800 px-8 py-6 text-center border-t border-slate-700">
                                 <button
@@ -200,37 +215,17 @@ const LoginPage = () => {
                                     className="text-sm text-slate-400 hover:text-white font-medium transition-colors"
                                 >
                                     {isRegister ? (
-                                        <>
-                                            Already have an account?{' '}
-                                            <span className="text-blue-400 hover:text-blue-300 font-semibold">
-                                                Sign in
-                                            </span>
-                                        </>
+                                        <>Already have an account? <span className="text-blue-400 hover:text-blue-300 font-semibold">Sign in</span></>
                                     ) : (
-                                        <>
-                                            Don't have an account?{' '}
-                                            <span className="text-blue-400 hover:text-blue-300 font-semibold">
-                                                Sign up
-                                            </span>
-                                        </>
+                                        <>Don't have an account? <span className="text-blue-400 hover:text-blue-300 font-semibold">Sign up</span></>
                                     )}
                                 </button>
                             </div>
-                            {/* Footer - uncomment jika diperlukan */}
-                            {/* <div className="bg-slate-800 px-8 py-6 text-center border-t border-slate-700">
-                        <p className="text-sm text-slate-400">
-                            Don't have an account?{' '}
-                            <a href="#signup" className="font-medium text-gradient hover:opacity-80 transition">
-                                Sign up
-                            </a>
-                        </p>
-                    </div> */}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     );
 };
 

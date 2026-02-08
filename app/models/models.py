@@ -38,7 +38,12 @@ class Accounts(Base):
     feedbacks = relationship("UserFeedback", back_populates="accounts")
     subscriptions = relationship("UserSubscription", back_populates="accounts", cascade="all, delete-orphan")
     account_roles = relationship("AccountRole", back_populates="account", cascade="all, delete-orphan",uselist=False)
-
+    registration_token = relationship(
+        "RegistrationToken",
+        back_populates="account",
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
 
 class AccountRole(Base):
     __tablename__ = "account_roles"
@@ -396,10 +401,14 @@ class RegistrationToken(Base):
     __tablename__ = "registration_token"
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
     token = Column(String(100), unique=True)
-    account_id = Column(String(100))
+    account_id = Column(PG_UUID(as_uuid=True), ForeignKey("accounts.id", ondelete="CASCADE"), index=True,unique=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(DateTime(timezone=True))
-
+    account = relationship(
+        "Accounts",
+        back_populates="registration_token"
+    )
+    
 DB_URL = env_config.get("DATABASE_URL")
 
 engine = create_engine(DB_URL, echo=False, pool_size=10, max_overflow=20)

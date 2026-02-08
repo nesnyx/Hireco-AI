@@ -38,8 +38,9 @@ const PricingCard = ({ plan, price, period, description, features, highlighted =
           className="w-full"
           size="lg"
           href={"/admin/login"}
+          disabled = {plan == "Starter" ? true : false}
         >
-          {buttonText}
+          {plan == "Starter" ? "Coming Soon" : buttonText}
         </Button>
       </GlowCard>
     </div>
