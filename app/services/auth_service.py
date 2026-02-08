@@ -85,7 +85,10 @@ class AuthService:
         secret_token = secrets.token_urlsafe(32)
         existing_token = self._registration_token_repo.find(token=token_expired)
         if not existing_token:
-            raise RegistrationTokenNotFound()
+            return {
+                "success":False,
+                "msg":"invalid"
+            }
         existing_account = self._user_service.find_by_id(id=existing_token.account_id)
         if existing_account.is_verify == True:
             return {

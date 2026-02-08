@@ -1,7 +1,7 @@
 from fastapi import (
     Depends,
     APIRouter,
-    Query
+    Query,Body
 )
 from fastapi.responses import RedirectResponse
 from app.depedencies.user import  get_auth_service
@@ -34,36 +34,12 @@ async def me(current_user=Depends(get_current_user)):
 
 
 
-@auth_router.get("/verify")
-async def verify(token : str = Query(...), service: AuthService = Depends(get_auth_service)):
+@auth_router.post("/verify")
+async def verify(token : str = Body(...), service: AuthService = Depends(get_auth_service)):
     token_verify = service.verify(token)
-    if token_verify["msg"] == "expired":
-        return RedirectResponse(
-            f"{FRONTEND_BASE_URL}/verify?status=expired"
-        )
-    elif token_verify["msg"] == "not_found":
-        return RedirectResponse(
-            f"{FRONTEND_BASE_URL}/verify?status=invalid"
-        )
+    return token_verify
 
-    return RedirectResponse(
-        f"{FRONTEND_BASE_URL}/verify?status=success"
-    )
-
-@auth_router.get("/resend-verification")
-async def resend_verification(email : str = Query(...), service: AuthService = Depends(get_auth_service)):
-    resend = service.resend_verification(email=email)
-    if resend["msg"] == "resend":
-        return RedirectResponse(
-            f"{FRONTEND_BASE_URL}/resend-verification?status=resend"
-        )
-    
-    if resend["msg"] == "verify":
-        return RedirectResponse(
-            f"{FRONTEND_BASE_URL}/resend-verification?status=verify"
-        )
-    
-    
-    return RedirectResponse(
-            f"{FRONTEND_BASE_URL}/resend-verification?status=invalid"
-    )
+@auth_router.post("/resend-verification")
+async def resend_verification(token : str = Body(...), service: AuthService = Depends(get_auth_service)):
+    resend = service.resend_verification(token)
+    return resend

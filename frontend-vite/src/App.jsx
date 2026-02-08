@@ -4,7 +4,6 @@ import LoginPage from "../src/pages/admin/Login";
 import DashboardPage from "../src/pages/admin/Dashboard"
 import NotFoundRoute from "../src/pages/NotFound";
 import ProtectedRoute from "../src/layout/ProtectedLayout/admin";
-import Home from "../src/pages/guest/Home";
 import LandingPage from "../src/pages/guest/LandingPage";
 import GuestLayout from "./layout/MainLayout/guestLayout";
 import VerifyAccount from "./pages/admin/VerifyAccount";
