@@ -1,13 +1,9 @@
-// components/Features/FeaturesSection.jsx
-import React from 'react';
+
 import FeatureCard from '../landingPage/FeatureCard';
 import {
-    Users,
-    TrendingUp,
+
     CheckCircle,
-    Shield,
-    Clock,
-    DollarSign,
+
     Award,
     Brain,
     Globe,
@@ -16,26 +12,6 @@ import {
 
 const FeaturesSection = () => {
     const features = [
-        // {
-        //     icon: Users,
-        //     title: 'Employee Management',
-        //     description: 'Comprehensive employee lifecycle management with advanced analytics.',
-        //     features: [
-        //         'Performance analytics',
-        //         'Automated onboarding',
-        //         'Skills mapping & development'
-        //     ]
-        // },
-        // {
-        //     icon: TrendingUp,
-        //     title: 'Performance Analytics',
-        //     description: 'Data-driven insights to improve workforce productivity and engagement.',
-        //     features: [
-        //         'Predictive performance modeling',
-        //         'Team efficiency dashboards',
-        //         'KPI-based benchmarking'
-        //     ]
-        // },
         {
             icon: CheckCircle,
             title: 'Ease to use',

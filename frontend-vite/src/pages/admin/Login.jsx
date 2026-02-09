@@ -1,232 +1,213 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { authentication } from "../../integration/auth";
 import useAuthStore from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Home } from "lucide-react"; // npm install lucide-react
 import CustomAlert from "../../components/landingPage/UI/Alert";
-
-
+import Header from "../../components/landingPage/Header";
 
 const LoginPage = () => {
-    const [isRegister, setIsRegister] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [fullName, setName] = useState('');
-    const navigate = useNavigate();
+  const [isRegister, setIsRegister] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setName] = useState('');
+  const navigate = useNavigate();
 
-    // State untuk Custom Alert
-    const [alertConfig, setAlertConfig] = useState({ 
-        show: false, 
-        type: 'info', 
-        title: '', 
-        message: '' 
-    });
+  const [alertConfig, setAlertConfig] = useState({ 
+    show: false, type: 'info', title: '', message: '' 
+  });
 
-    const showAlert = (type, title, message) => {
-        setAlertConfig({ show: true, type, title, message });
-    };
+  const showAlert = (type, title, message) => {
+    setAlertConfig({ show: true, type, title, message });
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsLoading(true);
-        try {
-            if (isRegister && password !== confirmPassword) {
-                showAlert('error', 'Validation Error', 'Passwords do not match!');
-                setIsLoading(false);
-                return;
-            }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      if (isRegister && password !== confirmPassword) {
+        showAlert('error', 'Validation Error', 'Passwords do not match!');
+        setIsLoading(false);
+        return;
+      }
 
-            const payload = isRegister
-                ? { fullName, email, password }
-                : { email, password };
-
-            if (!isRegister) {
-                const response = await authentication.login(payload.email, payload.password);
-                const token = response.data.data.token;
-                localStorage.setItem("token", token);
-                await useAuthStore.getState().checkAuth();
-                navigate("/admin/dashboard");
-            } else {
-
-                const res = await authentication.register(payload.email, payload.password, payload.fullName);
-                if (res.data.data.detail === "new") {
-                    showAlert('success', 'Registration Success', 'Please check your email for verification.');
-                    setIsRegister(false);
-                    resetForm();
-                } else if (res.data.data.detail === "existing") {
-                    showAlert('warning', 'Existing Account', 'Account already exists. Please verify your email.');
-                    setIsRegister(false);
-                }
-            }
-        } catch (error) {
-            console.error(error);
-            showAlert('error', 'Authentication Failed', isRegister ? "Registration failed. Try again." : "Login failed. Check your credentials.");
-        } finally {
-            setIsLoading(false);
+      if (!isRegister) {
+        const response = await authentication.login(email, password);
+        const token = response.data.data.token;
+        localStorage.setItem("token", token);
+        await useAuthStore.getState().checkAuth();
+        navigate("/admin/dashboard");
+      } else {
+        const res = await authentication.register(email, password, fullName);
+        if (res.data.data.detail === "new") {
+          showAlert('success', 'Registration Success', 'Please check your email for verification.');
+          setIsRegister(false);
+          resetForm();
+        } else if (res.data.data.detail === "existing") {
+          showAlert('warning', 'Existing Account', 'Account already exists. Please verify your email.');
+          setIsRegister(false);
         }
-    };
+      }
+    } catch (error) {
+      showAlert('error', 'Auth Failed', isRegister ? "Registration failed." : "Login failed.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const resetForm = () => {
-        setName('');
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-    };
+  const resetForm = () => {
+    setName(''); setEmail(''); setPassword(''); setConfirmPassword('');
+  };
 
-    const toggleMode = () => {
-        setIsRegister(!isRegister);
-        resetForm();
-    };
+  const toggleMode = () => {
+    setIsRegister(!isRegister);
+    resetForm();
+  };
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-            
-            {/* RENDER CUSTOM ALERT */}
-            {alertConfig.show && (
-                <CustomAlert 
-                    {...alertConfig}
-                    onClose={() => setAlertConfig(prev => ({ ...prev, show: false }))}
-                />
-            )}
+  return (
+    <div className="min-h-screen w-full flex items-center justify-center bg-slate-950 relative overflow-hidden font-sans">
+     
+      
+      {/* Background Ornaments - Efek Cahaya di belakang */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/20 rounded-full blur-[120px] pointer-events-none" />
 
-            <div className="max-w-md w-full relative z-10">
-                <div className="gradient-border glow-effect">
-                    <div className="gradient-border-content p-0 text-white">
-                        <div className="bg-slate-900 rounded-2xl overflow-hidden">
-                            <div className="p-8 sm:p-10">
-                                <div className="text-center mb-8">
-                                    <h1 className="text-3xl font-bold text-gradient mb-2">Hireco</h1>
-                                    <p className="text-sm text-slate-400">
-                                        {isRegister ? 'Create your new account' : 'Sign in to your account'}
-                                    </p>
-                                </div>
+      {alertConfig.show && (
+        <CustomAlert 
+          {...alertConfig}
+          onClose={() => setAlertConfig(prev => ({ ...prev, show: false }))}
+        />
+      )}
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    {isRegister && (
-                                        <div className="fade-in-up">
-                                            <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-                                                Full Name
-                                            </label>
-                                            <div className="relative">
-                                                <input
-                                                    id="name"
-                                                    type="text"
-                                                    value={fullName}
-                                                    onChange={(e) => setName(e.target.value)}
-                                                    required={isRegister}
-                                                    className="w-full px-4 py-3 pl-11 bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-500"
-                                                    placeholder="Enter your full name"
-                                                />
-                                                <div className="absolute left-3 top-3.5">
-                                                    <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div>
-                                        <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-                                            Email
-                                        </label>
-                                        <input
-                                            id="email"
-                                            type="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            required
-                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-500"
-                                            placeholder="you@example.com"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-2">
-                                            Password
-                                        </label>
-                                        <input
-                                            id="password"
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            required
-                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-500"
-                                            placeholder="••••••••"
-                                        />
-                                    </div>
-
-                                    {isRegister && (
-                                        <div className="fade-in-up">
-                                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-300 mb-2">
-                                                Confirm Password
-                                            </label>
-                                            <div className="relative">
-                                                <input
-                                                    id="confirmPassword"
-                                                    type="password"
-                                                    value={confirmPassword}
-                                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                                    required
-                                                    className="w-full px-4 py-3 pl-11 bg-slate-800 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-slate-500"
-                                                    placeholder="••••••••"
-                                                />
-                                                <div className="absolute left-3 top-3.5">
-                                                    <svg className="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <button
-                                        type="submit"
-                                        disabled={isLoading}
-                                        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:from-slate-600 disabled:to-slate-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] disabled:scale-100 glow-effect disabled:shadow-none"
-                                    >
-                                        {isLoading ? (
-                                            <span className="flex items-center justify-center">
-                                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                </svg>
-                                                {isRegister ? 'Creating account...' : 'Signing in...'}
-                                            </span>
-                                        ) : (
-                                            <>
-                                                {isRegister ? 'Create Account' : 'Sign In'}
-                                                <svg className="inline-block ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                                </svg>
-                                            </>
-                                        )}
-                                    </button>
-                                </form>
-                                <div className="mt-6 text-center">
-                                    <a href="/" className="text-sm text-slate-400 hover:text-white transition-colors">Back Home</a>
-                                </div>
-                            </div>
-                            <div className="bg-slate-800 px-8 py-6 text-center border-t border-slate-700">
-                                <button
-                                    type="button"
-                                    onClick={toggleMode}
-                                    className="text-sm text-slate-400 hover:text-white font-medium transition-colors"
-                                >
-                                    {isRegister ? (
-                                        <>Already have an account? <span className="text-blue-400 hover:text-blue-300 font-semibold">Sign in</span></>
-                                    ) : (
-                                        <>Don't have an account? <span className="text-blue-400 hover:text-blue-300 font-semibold">Sign up</span></>
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div className="w-full max-w-[450px] z-10 px-6 py-12">
+        <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all duration-500">
+          
+          <div className="p-8 sm:p-10">
+            {/* Logo & Header */}
+            <div className="text-center mb-10">
+              <h1 className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mb-3">
+                Hireco
+              </h1>
+              <p className="text-slate-400 text-sm font-medium">
+                {isRegister ? 'Start your journey with us today' : 'Welcome back! Please enter your details'}
+              </p>
             </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {isRegister && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Full Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setName(e.target.value)}
+                      required={isRegister}
+                      placeholder="John Doe"
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-3.5 pl-10 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Email Address</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="name@company.com"
+                    className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-3.5 pl-10 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex justify-between items-center ml-1">
+                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Password</label>
+                  {!isRegister && <button type="button" className="text-xs text-blue-400 hover:underline">Forgot?</button>}
+                </div>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="••••••••"
+                    className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-3.5 pl-10 pr-12 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              {isRegister && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-400">
+                  <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Confirm Password</label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <input
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      placeholder="••••••••"
+                      className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-3.5 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-900/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-4"
+              >
+                {isLoading ? (
+                  <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    {isRegister ? 'Create Account' : 'Sign In'}
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="mt-8 flex items-center justify-center gap-2">
+               <Home className="text-slate-500" size={14} />
+               <a href="/" className="text-sm text-slate-500 hover:text-white transition-colors">Return to Home</a>
+            </div>
+          </div>
+
+          <div className="bg-slate-800/30 p-6 text-center border-t border-slate-800/50">
+            <p className="text-slate-400 text-sm">
+              {isRegister ? "Already have an account?" : "Don't have an account?"}
+              <button
+                onClick={toggleMode}
+                className="ml-2 text-blue-400 hover:text-blue-300 font-bold transition-colors"
+              >
+                {isRegister ? 'Sign In' : 'Sign Up for Free'}
+              </button>
+            </p>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default LoginPage;

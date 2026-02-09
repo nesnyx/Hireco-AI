@@ -17,7 +17,6 @@ const PricingSection = () => {
     {
       plan: 'Starter',
       price: 45000,
-      period: '/month',
       description: 'Perfect for small teams getting started',
       features: [
         'Max 50 CVs Screening',
@@ -89,7 +88,7 @@ const PricingSection = () => {
         {/* Bottom CTA */}
         <div className="text-center mt-16">
           <p className="text-slate-400 mb-8">
-            Need a custom solution? <a href="#contact" className="text-blue-400 hover:text-blue-300">Contact our sales team</a>
+            Need a custom solution? <a href="http://wa.me/6282157704435" target='_blank' className="text-blue-400 hover:text-blue-300">Contact our sales team</a>
           </p>
           <div className="flex flex-wrap justify-center gap-8 text-sm text-slate-500">
             <span>✓ 14-day free trial</span>

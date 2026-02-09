@@ -8,7 +8,7 @@ const Footer = () => {
     product: [
       { label: 'Features', href: '#features' },
       { label: 'Pricing', href: '#pricing' },
-      // { label: 'Security', href: '#security' },
+      { label: 'FAQ', href: '#faq' },
       // { label: 'Integrations', href: '#integrations' }
     ],
     // company: [
@@ -32,10 +32,9 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Twitter, href: '#twitter', label: 'Twitter' },
-    { icon: Linkedin, href: '#linkedin', label: 'LinkedIn' },
-    { icon: Github, href: '#github', label: 'GitHub' },
-    { icon: Mail, href: '#email', label: 'Email' }
+    { icon: Linkedin, href: 'https://www.linkedin.com/in/aris-setiawan-bara-6b0155213/', label: 'LinkedIn' },
+    { icon: Github, href: 'https://github.com/nesnyx', label: 'GitHub' },
+    { icon: Mail, href: 'baraaris7@gmail.com', label: 'Email' }
   ];
 
   return (
@@ -51,7 +50,7 @@ const Footer = () => {
               <span className="text-2xl font-bold text-gradient">Hireco</span>
             </div>
             <p className="text-slate-400 mb-6 max-w-sm">
-              Revolutionary HR management platform powered by AI technology.
+             HR management platform powered by AI technology.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => {
@@ -60,6 +59,7 @@ const Footer = () => {
                   <a
                     key={social.label}
                     href={social.href}
+                    target='_blank'
                     className="p-2 bg-slate-800 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700 transition-colors"
                     aria-label={social.label}
                   >
@@ -93,7 +93,7 @@ const Footer = () => {
         {/* Bottom */}
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-slate-400 text-sm">
-            © 2025 Hireco. All rights reserved.
+            © 2026 Hireco. All rights reserved.
           </p>
           <div className="flex items-center space-x-6 mt-4 md:mt-0">
             <div className="flex items-center space-x-2 text-sm text-slate-500">
