@@ -27,3 +27,6 @@ class RegistrationTokenNotFound(Exception):
 
 
 class UserNotVerify(Exception):pass
+
+class CreditNotFound(Exception):pass
+class CreditDischarge(Exception):pass

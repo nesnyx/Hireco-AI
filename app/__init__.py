@@ -5,9 +5,10 @@ from app.api.routes.auth import auth_router
 from app.api.routes.hr import hr_router
 from app.api.routes.pricing import pricing_router
 from app.api.routes.role import role_router
+from app.api.routes.subscription import subscription_router
 from fastapi.middleware.cors import CORSMiddleware
 from app.helper.api_response import ResponseWrapperMiddleware
-from app.helper.error_handling import InvalidCredentials, PricingAlreadyExists, PricingNotFound, RegistrationTokenNotFound, RoleNotFound, UserNotFound, UserNotVerify, UserPasswordMismatch
+from app.helper.error_handling import CreditDischarge, CreditNotFound, InvalidCredentials, PricingAlreadyExists, PricingNotFound, RegistrationTokenNotFound, RoleNotFound, UserNotFound, UserNotVerify, UserPasswordMismatch
 from app.core.env import env_config
 from app.subscribers import analysis_subscriber,email_subscriber
 origins = [env_config.get("ORIGINS")]
@@ -25,7 +26,7 @@ app.include_router(auth_router)
 app.include_router(hr_router)
 app.include_router(pricing_router)
 app.include_router(role_router)
-
+app.include_router(subscription_router)
 
 @app.get("/health")
 def health():
@@ -91,5 +92,19 @@ async def user_not_verify(request: Request, exc):
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={"detail": "Your Acoount Has not been Verify"},
-
+    )
+    
+    
+@app.exception_handler(CreditNotFound)
+async def credit_not_found(request: Request, exc):
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"detail": "Your Credit Not Found"},
+    )
+    
+@app.exception_handler(CreditDischarge)
+async def credit_discharge(request: Request, exc):
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": "Your Credit Discharge"},
     )

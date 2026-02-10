@@ -66,8 +66,7 @@ class ApplicantRepository:
         applicant.experience = payload.experience
         applicant.presentation_quality = payload.presentation_quality
         applicant.status = status
-        self._db_session.commit()
-        self._db_session.refresh(applicant)
+        self._db_session.flush()
         return applicant
     
     def get_all(self):
