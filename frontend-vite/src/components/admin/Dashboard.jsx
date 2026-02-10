@@ -67,7 +67,7 @@ export default function Dashboard() {
                             <p className="text-sm text-slate-400 font-medium">Total Jobs</p>
                             <p className="text-3xl font-bold text-white mt-2">{jobs.length}</p>
                         </div>
-                        <div className="w-12 h-12 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl flex items-center justify-center border border-blue-500/30">
+                        <div className="w-12 h-12 bg-linear-to-r from-blue-600/20 to-purple-600/20 rounded-xl flex items-center justify-center border border-blue-500/30">
                            <BriefcaseBusiness className="h-6 w-6 text-blue-400" />
                         </div>
                     </div>
@@ -104,7 +104,7 @@ export default function Dashboard() {
                                     Math.round(applicant.reduce((acc, app) => acc + app.score, 0) / applicant.length) : 0}
                             </p>
                         </div>
-                        <div className="w-12 h-12 bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-xl flex items-center justify-center border border-green-500/30">
+                        <div className="w-12 h-12 bg-linear-to-r from-green-600/20 to-emerald-600/20 rounded-xl flex items-center justify-center border border-green-500/30">
                             <svg className="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                             </svg>
@@ -128,7 +128,7 @@ export default function Dashboard() {
                                 }).length}
                             </p>
                         </div>
-                        <div className="w-12 h-12 bg-gradient-to-r from-orange-600/20 to-red-600/20 rounded-xl flex items-center justify-center border border-orange-500/30">
+                        <div className="w-12 h-12 bg-linear-to-r from-orange-600/20 to-red-600/20 rounded-xl flex items-center justify-center border border-orange-500/30">
                             <Calendar className="h-6 w-6 text-orange-400" />
                         </div>
                     </div>

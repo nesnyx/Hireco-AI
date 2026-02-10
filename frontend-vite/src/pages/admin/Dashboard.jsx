@@ -9,6 +9,7 @@ import ComparingPage from '../../components/admin/Comparing';
 import useAuthStore from '../../store/authStore';
 import CustomAlert from '../../components/landingPage/UI/Alert';
 import { useNavigate } from 'react-router-dom';
+import useCreditStore from '../../store/creditStore';
 
 const DashboardPage = () => {
   const [activePage, setActivePage] = useState('applicant');
@@ -19,9 +20,12 @@ const DashboardPage = () => {
     title: '',
     message: ''
   });
-
   const { user } = useAuthStore();
+  const { credit,findCredit } = useCreditStore()
   const navigate = useNavigate();
+  useEffect(()=>{
+    findCredit()
+  },[findCredit])
 
   const showAlert = (type, title, message) => {
     setAlertConfig({ show: true, type, title, message });
@@ -59,7 +63,7 @@ const DashboardPage = () => {
       {/* --- MOBILE HEADER --- */}
       <div className="lg:hidden flex justify-between items-center px-6 py-4 border-b border-slate-700 bg-slate-900 sticky top-0 z-50">
         <div className="text-xl font-bold text-blue-500">Hireco</div>
-        <button 
+        <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="p-2 text-slate-300 hover:bg-slate-800 rounded-lg"
         >
@@ -80,7 +84,7 @@ const DashboardPage = () => {
           </div>
 
           <div className="p-4 border-b border-slate-700 lg:hidden">
-             <p className="text-sm text-slate-400 truncate">{user?.email}</p>
+            <p className="text-sm text-slate-400 truncate">{user?.email}</p>
           </div>
 
           <nav className="flex-1 px-4 py-6 overflow-y-auto">
@@ -92,11 +96,10 @@ const DashboardPage = () => {
                       setActivePage(item.key);
                       setIsSidebarOpen(false); // Close sidebar on mobile after click
                     }}
-                    className={`flex items-center space-x-3 px-4 py-3 w-full text-left rounded-xl transition-all duration-200 ${
-                      activePage === item.key
+                    className={`flex items-center space-x-3 px-4 py-3 w-full text-left rounded-xl transition-all duration-200 ${activePage === item.key
                         ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
                         : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-                    }`}
+                      }`}
                   >
                     {item.icon}
                     <span>{item.label}</span>
@@ -108,14 +111,14 @@ const DashboardPage = () => {
 
           {/* User Credits Section */}
           <div className="px-4 py-4 space-y-2 text-xs border-t border-slate-700">
-             <div className="flex justify-between items-center bg-slate-900/50 p-2 rounded-lg">
-                <span className="text-slate-400">Plan:</span>
-                <span className="bg-green-700 px-2 py-0.5 rounded text-white font-medium">{user?.pricing}</span>
-             </div>
-             <div className="flex justify-between items-center bg-slate-900/50 p-2 rounded-lg">
-                <span className="text-slate-400">Credits:</span>
-                <span className="bg-blue-700 px-2 py-0.5 rounded text-white font-medium">{user?.credit}</span>
-             </div>
+            <div className="flex justify-between items-center bg-slate-900/50 p-2 rounded-lg">
+              <span className="text-slate-400">Plan:</span>
+              <span className="bg-green-700 px-2 py-0.5 rounded text-white font-medium">{user?.pricing}</span>
+            </div>
+            <div className="flex justify-between items-center bg-slate-900/50 p-2 rounded-lg">
+              <span className="text-slate-400">Credits:</span>
+              <span className="bg-blue-700 px-2 py-0.5 rounded text-white font-medium">{credit}</span>
+            </div>
           </div>
 
           <div className="p-4 border-t border-slate-700">
@@ -136,7 +139,7 @@ const DashboardPage = () => {
 
       {/* --- OVERLAY (Click to close sidebar on mobile) --- */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -156,7 +159,7 @@ const DashboardPage = () => {
 
         <main className="flex-1 overflow-auto p-4 md:p-8">
           <div className="max-w-7xl mx-auto">
-             {renderContent()}
+            {renderContent()}
           </div>
         </main>
       </div>
