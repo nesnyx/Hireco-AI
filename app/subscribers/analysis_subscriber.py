@@ -61,8 +61,8 @@ async def handle_pdf_analysis(payload: dict, loader_pdf_func,applicant_id,accoun
             job_id=job_id,
             account_id=account_id
         )
-        applicant_repository.update(file_id,payload,"COMPLETED")
         subscription_credit_service.update(subscription_id=existing_user_subscription.id,amount=credit_subscription.amount)
+        applicant_repository.update(file_id,payload,"COMPLETED")
         db.commit()
         logging.info(f"✅ Selesai processing untuk file_id: {file_id}")
     except Exception as e:

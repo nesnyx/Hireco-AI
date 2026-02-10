@@ -5,17 +5,20 @@ import { FaFilePdf, FaEye, FaTrash, FaUser, FaEnvelope, FaPhone, FaCalendar, FaS
 import useApplicantStore from "../../store/applicantStore";
 import { DetailModal } from "../applicant/DetailModal";
 import { DeleteModal } from "../applicant/DeleteModal";
+import useCreditStore from "../../store/creditStore";
 
 export default function Applicant() {
     const { data, findAll, removeApplicant } = useApplicantStore();
     const [searchTerm, setSearchTerm] = useState("");
+      const { credit,findCredit } = useCreditStore()
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         findAll();
-    }, [findAll]);
+        findCredit();
+    }, [findAll],findCredit);
 
     const filteredApplicants = useMemo(() => {
         if (!data) return [];
@@ -100,8 +103,8 @@ export default function Applicant() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-700">
-                            {filteredApplicants.length > 0 ? (
-                                filteredApplicants.map((reg) => (
+                            {data.length > 0 ? (
+                                data.map((reg) => (
                                     <tr key={reg.id} className="hover:bg-slate-700/50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center space-x-3">
@@ -125,9 +128,7 @@ export default function Applicant() {
                                             {DateTime.fromISO(reg.created_at).toFormat('MMM dd, yyyy')}
                                         </td>
                                         <td className="px-6 py-4 text-slate-300">
-                                            {reg.status === "COMPLETED" ? (
-                                                <p className="text-green-400">{reg.status}</p>
-                                            ): <p className="text-yellow-400">{reg.status}</p>}
+                                            <p className="text-green-400">{reg.status}</p>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-center space-x-2">

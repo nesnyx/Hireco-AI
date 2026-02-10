@@ -31,8 +31,13 @@ class SubscriptionCreditRepository:
         self._db_session.flush()
         return credit
     
-    def update(self,subscription_id : str,amount : int):
-        return self._db_session.execute(update(SubscriptionCredit).where(SubscriptionCredit.subscription_id == subscription_id).values(SubscriptionCredit.amount == amount))
+    def update(self, subscription_id: str, amount: int):
+        stmt = (
+            update(SubscriptionCredit)
+            .where(SubscriptionCredit.subscription_id == subscription_id)
+            .values(amount=amount)
+        )
+        return self._db_session.execute(stmt)
     
     
     

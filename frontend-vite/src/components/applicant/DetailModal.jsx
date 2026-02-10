@@ -23,7 +23,7 @@ export function DetailModal({ app, onClose, getScoreBadge, safeParse }) {
         {/* Modal Header */}
         <div className="sticky top-0 bg-slate-900/80 backdrop-blur-md flex justify-between items-center p-6 border-b border-slate-700 z-10">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
               <FaUser className="h-5 w-5 text-white" />
             </div>
             <h3 className="text-xl font-semibold text-white">Applicant Profile</h3>
@@ -53,7 +53,7 @@ export function DetailModal({ app, onClose, getScoreBadge, safeParse }) {
               </div>
             </div>
             <div className="text-center">
-              <div className={`${getScoreBadge(app.score).bg} ${getScoreBadge(app.score).text} border ${getScoreBadge(app.score).border} rounded-2xl p-4 min-w-[100px]`}>
+              <div className={`${getScoreBadge(app.score).bg} ${getScoreBadge(app.score).text} border ${getScoreBadge(app.score).border} rounded-2xl p-4 min-w-25`}>
                 <p className="text-3xl font-black">{app.score}</p>
                 <p className="text-xs uppercase tracking-wider font-bold opacity-70">Final Score</p>
               </div>
@@ -99,7 +99,7 @@ export function DetailModal({ app, onClose, getScoreBadge, safeParse }) {
                 <FaFilePdf size={24} />
               </div>
               <div>
-                <p className="text-white font-medium truncate max-w-[200px] md:max-w-xs">{app.filename.split("/").pop()}</p>
+                <p className="text-white font-medium truncate max-w-50 md:max-w-xs">{app.filename.split("/").pop()}</p>
                 <p className="text-slate-500 text-xs">Curriculum Vitae • PDF</p>
               </div>
             </div>
