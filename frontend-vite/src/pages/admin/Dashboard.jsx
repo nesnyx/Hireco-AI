@@ -21,11 +21,16 @@ const DashboardPage = () => {
     message: ''
   });
   const { user } = useAuthStore();
-  const { credit,findCredit } = useCreditStore()
+  const { credit, findCredit } = useCreditStore()
   const navigate = useNavigate();
-  useEffect(()=>{
-    findCredit()
-  },[findCredit])
+  useEffect(() => {
+    findCredit();
+    const interval = setInterval(() => {
+      findCredit();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [findCredit]);
 
   const showAlert = (type, title, message) => {
     setAlertConfig({ show: true, type, title, message });
@@ -97,8 +102,8 @@ const DashboardPage = () => {
                       setIsSidebarOpen(false); // Close sidebar on mobile after click
                     }}
                     className={`flex items-center space-x-3 px-4 py-3 w-full text-left rounded-xl transition-all duration-200 ${activePage === item.key
-                        ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
-                        : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                      ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30'
+                      : 'text-slate-300 hover:bg-slate-700 hover:text-white'
                       }`}
                   >
                     {item.icon}

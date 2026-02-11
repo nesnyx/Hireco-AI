@@ -10,22 +10,21 @@ import useCreditStore from "../../store/creditStore";
 export default function Applicant() {
     const { data, findAll, removeApplicant } = useApplicantStore();
     const [searchTerm, setSearchTerm] = useState("");
-    const { credit, findCredit } = useCreditStore()
+
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         findAll();
-        findCredit();
-    }, [findAll], findCredit);
+        const intervalId = setInterval(() => {
+            findAll();
+        }, 5000); 
 
-    const filteredApplicants = useMemo(() => {
-        if (!data) return [];
-        return data.filter(app =>
-            app.name
-        );
-    }, [data, searchTerm]);
+        return () => {
+            clearInterval(intervalId);
+        };
+    }, [findAll]);
 
     const stats = useMemo(() => {
         const total = data?.length || 0;
