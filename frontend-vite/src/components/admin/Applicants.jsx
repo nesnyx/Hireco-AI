@@ -10,7 +10,7 @@ import useCreditStore from "../../store/creditStore";
 export default function Applicant() {
     const { data, findAll, removeApplicant } = useApplicantStore();
     const [searchTerm, setSearchTerm] = useState("");
-      const { credit,findCredit } = useCreditStore()
+    const { credit, findCredit } = useCreditStore()
     const [selectedApplicant, setSelectedApplicant] = useState(null);
     const [deleteTarget, setDeleteTarget] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -18,11 +18,11 @@ export default function Applicant() {
     useEffect(() => {
         findAll();
         findCredit();
-    }, [findAll],findCredit);
+    }, [findAll], findCredit);
 
     const filteredApplicants = useMemo(() => {
         if (!data) return [];
-        return data.filter(app => 
+        return data.filter(app =>
             app.name
         );
     }, [data, searchTerm]);
@@ -36,10 +36,10 @@ export default function Applicant() {
 
     const confirmDelete = async () => {
         if (!deleteTarget) return;
-        
+
         setIsDeleting(true);
         const result = await removeApplicant(deleteTarget.id);
-        
+
         if (result.success) {
             alert(`Applicant "${deleteTarget.name}" berhasil dihapus.`);
             setDeleteTarget(null);
@@ -57,7 +57,7 @@ export default function Applicant() {
     };
 
     const safeParse = (str) => {
-        try { return JSON.parse(str); } 
+        try { return JSON.parse(str); }
         catch (e) { return { score: 0, feedback: "", issues: "" }; }
     };
 
@@ -83,9 +83,9 @@ export default function Applicant() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard title="Total Applicants" value={stats.total} icon={<FaUser/>} color="blue" />
-                <StatCard title="High Scores (≥80)" value={stats.highScores} icon={<FaStar/>} color="green" />
-                <StatCard title="Average Score" value={stats.avg} icon={<FaStar/>} color="purple" isChart />
+                <StatCard title="Total Applicants" value={stats.total} icon={<FaUser />} color="blue" />
+                <StatCard title="High Scores (≥80)" value={stats.highScores} icon={<FaStar />} color="green" />
+                <StatCard title="Average Score" value={stats.avg} icon={<FaStar />} color="purple" isChart />
             </div>
 
             {/* Table */}
@@ -132,8 +132,8 @@ export default function Applicant() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex justify-center space-x-2">
-                                                <button onClick={() => setSelectedApplicant(reg)} className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white"><FaEye/></button>
-                                                <button onClick={() => setDeleteTarget(reg)} className="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white"><FaTrash/></button>
+                                                <button onClick={() => setSelectedApplicant(reg)} className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white"><FaEye /></button>
+                                                <button onClick={() => setDeleteTarget(reg)} className="p-2 bg-red-600 hover:bg-red-700 rounded-lg text-white"><FaTrash /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -147,18 +147,18 @@ export default function Applicant() {
             </div>
 
             {selectedApplicant && (
-                <DetailModal 
-                    app={selectedApplicant} 
-                    onClose={() => setSelectedApplicant(null)} 
+                <DetailModal
+                    app={selectedApplicant}
+                    onClose={() => setSelectedApplicant(null)}
                     getScoreBadge={getScoreBadge}
                     safeParse={safeParse}
                 />
             )}
 
             {deleteTarget && (
-                <DeleteModal 
-                    app={deleteTarget} 
-                    onClose={() => setDeleteTarget(null)} 
+                <DeleteModal
+                    app={deleteTarget}
+                    onClose={() => setDeleteTarget(null)}
                     onConfirm={confirmDelete}
                     isLoading={isDeleting}
                 />

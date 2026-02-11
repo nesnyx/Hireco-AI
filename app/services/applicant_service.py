@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import List
-import uuid, asyncio
+import uuid, asyncio,shutil,fitz,os,tempfile
 from concurrent.futures import ProcessPoolExecutor
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -17,6 +17,8 @@ from langchain_core.output_parsers import JsonOutputParser
 from app.core.events import ee, ANALYSIS_STARTED
 
 executor = ProcessPoolExecutor()
+UPLOAD_DIR = Path("uploads")
+UPLOAD_DIR.mkdir(exist_ok=True)
 
 def heavy_pdf_logic(file_path : str):
         loader = PyPDFLoader(file_path)
@@ -36,8 +38,6 @@ class ApplicantService:
             split_texts = await loop.run_in_executor(executor, heavy_pdf_logic, file_path)
         except Exception as e:
             raise ValueError("Invalid PDF")
-        
-        
         metadatas = {
             "job_id": job_id,
             "file_id": file_id,
@@ -64,15 +64,14 @@ class ApplicantService:
         return result
     
     async def analyze(self,job_id : str,file:UploadFile,account_id:str):
-        UPLOAD_DIR = Path("uploads")
-        UPLOAD_DIR.mkdir(exist_ok=True)
         job = self._hr_service.find_by_id(id=job_id)           
         if not job:
             raise JobNotFound()         
         file_id = str(uuid.uuid4())
         file_path = UPLOAD_DIR / f"{file_id}.pdf"                  
-        with open(file_path, "wb") as f:
-            f.write(await file.read())
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+            
         event_payload = {
             "job_id": job_id,
             "file_id": file_id,
@@ -97,8 +96,6 @@ class ApplicantService:
     
     
     async def analyze_batch(self,job_id : str,files:List[UploadFile]):
-        UPLOAD_DIR = Path("uploads")
-        UPLOAD_DIR.mkdir(exist_ok=True)
         processed_results = []
         data = []
         job = self._hr_service.find_by_id(id=job_id)           
@@ -210,6 +207,22 @@ class ApplicantService:
                 "highlights": {"positive": [], "negative": []},
             }
 
+
+
+    def compress_pdf_inplace(self,file_path: str):
+        temp_fd, temp_path = tempfile.mkstemp(suffix=".pdf")
+        os.close(temp_fd)
+        doc = fitz.open(file_path)
+        doc.save(
+            temp_path,
+            garbage=4,      # hapus object gak kepake
+            deflate=True,   # kompres stream PDF
+            clean=True,     # rapihin struktur PDF
+            linear=True     # fast web view
+        )
+        doc.close()
+        os.replace(temp_path, file_path)
+        
     def find_all(self):
         return self._applicant_repository.get_all()
     

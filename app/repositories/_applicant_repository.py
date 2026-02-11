@@ -1,3 +1,4 @@
+from pathlib import Path
 from sqlalchemy.orm import Session
 
 from app.helper.error_handling import ApplicantNotFound
@@ -76,6 +77,9 @@ class ApplicantRepository:
         applicant = self._db_session.query(CVAnalysis).filter(CVAnalysis.id == id).first()
         if not applicant:
             return ApplicantNotFound()
+        path_to_delete = Path(applicant.filename)
+        if path_to_delete.exists():
+            path_to_delete.unlink()
         self._db_session.delete(applicant)
         self._db_session.commit()
         return True

@@ -87,13 +87,12 @@ class CVAnalysis(Base):
     file_id = Column(String(100), unique=True, nullable=False, index=True)
     job_id = Column(PG_UUID, ForeignKey("jobs.id", ondelete="CASCADE"), nullable=False, index=True)
     account_id =Column(PG_UUID, ForeignKey("accounts.id", ondelete="CASCADE"), nullable=False, index=True)
-    # Metadata
+
     name = Column(String(255))
     email = Column(String(255), index=True)
     telp = Column(String(50))
     filename = Column(String(255))
-
-    # Scores
+    
     score = Column(Float)
     explanation = Column(Text)
     hard_skill = Column(JSONB)
@@ -104,7 +103,7 @@ class CVAnalysis(Base):
     status = Column(String(50), default="PROCCESED", index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    # Relationships
+
     account = relationship("Accounts", back_populates="cv_analyses")
     jobs = relationship("Job", back_populates="cv_analyses")
     criteria_matches = relationship("CriteriaMatchDetail", back_populates="cv_analysis", cascade="all, delete-orphan")
@@ -113,17 +112,12 @@ class CVAnalysis(Base):
 
 class CVFile(Base):
     __tablename__ = "cv_files"
-    
-    # Gunakan Native Postgres UUID
     id = Column(PG_UUID(as_uuid=True), primary_key=True, default=gen_uuid)
     file_id = Column(String(100), unique=True, index=True)
-    user_email = Column(String(255), index=True)
-    job_id = Column(PG_UUID, ForeignKey("jobs.id", ondelete="SET NULL"), index=True)
     file_path = Column(String(512), nullable=False)
     file_size = Column(Integer)
     mime_type = Column(String(100))
     uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
-
 
 class EmbeddingIndex(Base):
     __tablename__ = "embedding_index"

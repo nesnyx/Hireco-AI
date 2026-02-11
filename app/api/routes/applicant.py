@@ -42,7 +42,9 @@ async def upload_cv(
     service : ApplicantService = Depends(get_applicant_service),
     current_user=Depends(get_current_user)
 ):
-    
+    if files.content_type != "application/pdf":
+        return {"error": "Only PDF allowed"}
+
     return await service.analyze(job_id=job_id,file=files,account_id=current_user["id"])
 
 
