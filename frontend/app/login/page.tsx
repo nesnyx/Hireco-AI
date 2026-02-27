@@ -1,10 +1,13 @@
+"use client";
+
+
 import { useState } from "react";
 import { authentication } from "../../integration/auth";
 import useAuthStore from "../../store/authStore";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Home } from "lucide-react"; // npm install lucide-react
 import CustomAlert from "../../components/landingPage/UI/Alert";
-import Header from "../../components/landingPage/Header";
+
 
 const LoginPage = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -14,17 +17,17 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setName] = useState('');
-  const navigate = useNavigate();
+  const navigate = useRouter();
 
   const [alertConfig, setAlertConfig] = useState({ 
     show: false, type: 'info', title: '', message: '' 
   });
 
-  const showAlert = (type, title, message) => {
+  const showAlert = (type:any, title:any, message:any) => {
     setAlertConfig({ show: true, type, title, message });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e : any) => {
     e.preventDefault();
     setIsLoading(true);
     try {
@@ -39,7 +42,7 @@ const LoginPage = () => {
         const token = response.data.data.token;
         localStorage.setItem("token", token);
         await useAuthStore.getState().checkAuth();
-        navigate("/admin/dashboard");
+        navigate.push('/dashboard');
       } else {
         const res = await authentication.register(email, password, fullName);
         if (res.data.data.detail === "new") {
@@ -82,7 +85,7 @@ const LoginPage = () => {
         />
       )}
 
-      <div className="w-full max-w-[450px] z-10 px-6 py-12">
+      <div className="w-full max-w-112.5 z-10 px-6 py-12">
         <div className="bg-slate-900/40 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl overflow-hidden transition-all duration-500">
           
           <div className="p-8 sm:p-10">
