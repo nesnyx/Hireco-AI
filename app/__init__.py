@@ -16,7 +16,7 @@ app = FastAPI(title="Hireco", version="0.1.0")
 app.add_middleware(ResponseWrapperMiddleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['https://hireco.nadinata.org'],
+    allow_origins=['https://hireco.nadinata.org','http://localhost:3000'],
     allow_methods=["*"],
     allow_headers=["*"],
 )

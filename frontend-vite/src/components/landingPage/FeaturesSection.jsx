@@ -39,7 +39,7 @@ const FeaturesSection = () => {
     const highlights = [
         { icon: Globe, title: '5+ Countries', description: 'Global compliance coverage' },
         { icon: Zap, title: '40% Uptime', description: 'Enterprise reliability' },
-        
+
     ];
 
     return (
@@ -66,7 +66,7 @@ const FeaturesSection = () => {
                 </div>
 
                 {/* Highlights */}
-                <div className="grid md:grid-cols-2 gap-8">
+                {/* <div className="grid md:grid-cols-2 gap-8">
                     {highlights.map((highlight, index) => {
                         const Icon = highlight.icon;
                         return (
@@ -79,7 +79,7 @@ const FeaturesSection = () => {
                             </div>
                         );
                     })}
-                </div>
+                </div> */}
             </div>
         </section>
     );

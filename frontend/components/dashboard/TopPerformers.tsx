@@ -42,13 +42,13 @@ const TopPerformers = () => {
     },
   ];
 
-  const getRankIcon = (rank) => {
+  const getRankIcon = (rank:any) => {
     if (rank === 1) return <Crown className="h-4 w-4 text-yellow-400" />;
     if (rank <= 3) return <Star className="h-4 w-4 text-gray-400" />;
     return <span className="text-sm text-gray-500">#{rank}</span>;
   };
 
-  const getRankGradient = (rank) => {
+  const getRankGradient = (rank:any) => {
     if (rank === 1) return 'from-yellow-500 to-orange-500';
     if (rank === 2) return 'from-gray-400 to-gray-600';
     if (rank === 3) return 'from-amber-600 to-yellow-700';
@@ -69,11 +69,11 @@ const TopPerformers = () => {
         <div className="space-y-4">
           {performers.map((performer) => (
             <div key={performer.id} className="flex items-center space-x-4 p-3 bg-gray-700/30 rounded-lg border border-gray-600/30 hover:border-blue-500/50 transition-colors">
-              <div className={`p-2 rounded-full bg-gradient-to-r ${getRankGradient(performer.rank)}`}>
+              <div className={`p-2 rounded-full bg-linear-to-r ${getRankGradient(performer.rank)}`}>
                 {getRankIcon(performer.rank)}
               </div>
               
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-purple-600 flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">
                   {performer.name.split(' ').map(n => n[0]).join('')}
                 </span>
@@ -95,7 +95,7 @@ const TopPerformers = () => {
           ))}
         </div>
         
-        <button className="w-full mt-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all">
+        <button className="w-full mt-4 py-2 bg-linear-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all">
           View Full Leaderboard
         </button>
       </div>
